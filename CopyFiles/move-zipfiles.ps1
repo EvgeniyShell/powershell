@@ -32,7 +32,7 @@ for ($i=0; $i -ne $1.Count ; $i++)
             #If files exists, we add digits to the end of the filename.
             if (Test-Path ($DIREC2+$FileName+"."+$filter))
             {
-                $TMP = $DestPTH+$DIREC+"."+$filter
+                $TMP = $DIREC2+$FileName+"."+$filter
                 $TMPCOUNT = 1
                 while (Test-Path $TMP)
                 {
