@@ -27,7 +27,7 @@ for ($i=0; $i -ne $1.Count ; $i++)
         }
         
         #if folder, in destPTH, exists. Moving files.
-        if (Test-Path ($DestPTH+$DIREC))
+        if (Test-Path ($DIREC2))
         {
             #If files exists, we add digits to the end of the filename.
             if (Test-Path ($DIREC2+$FileName+"."+$filter))
