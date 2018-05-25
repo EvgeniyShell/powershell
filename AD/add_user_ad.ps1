@@ -97,7 +97,7 @@ if ($multi -eq $true)
             {
                 if ($t -cgt 10)
                 {
-                    [System.Windows.Forms.MessageBox]::Show("Всего не добавленых пользователей - $t","Уведомление","OK","Warning")
+                    [System.Windows.Forms.MessageBox]::Show("Всего не добавленых пользователей - $t`nВсего добавлено пользователей - $y","Уведомление","OK","Warning")
                 }
                 else
                 {
