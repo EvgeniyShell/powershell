@@ -1,5 +1,8 @@
-function move-zipfiles ([string]$SourcePTH="C:\Program Files\Microsoft\Exchange Server\V15\Logging\",[string]$DestPTH="\\FILESERVER\E$\Exchange\ARCHIVE\",$filter="zip",$show=$true)
+﻿function move-zipfiles ([string]$SourcePTH="C:\Program Files\Microsoft\Exchange Server\V15\Logging\",[string]$DestPTH="\\pso-fs-101\E$\Exchange\Archive_LOGS_2016EX\",$filter="zip",[bool]$show=$true)
 {
+#IIS logs - C:\inetpub\logs\LogFiles\
+#Exchange logs - C:\Program Files\Microsoft\Exchange Server\V15\Logging\
+
 [array]$1 = Get-ChildItem $SourcePTH -Filter ("*."+$filter) -Recurse | select name,Directory,Length
 
 if ($show -eq $False)
