@@ -2,7 +2,6 @@
 {
 #IIS logs - C:\inetpub\logs\LogFiles\
 #Exchange logs - C:\Program Files\Microsoft\Exchange Server\V15\Logging\
-
 [array]$1 = Get-ChildItem $SourcePTH -Filter ("*."+$filter) -Recurse | select name,Directory,Length
 
 if ($show -eq $False)
@@ -26,7 +25,8 @@ for ($i=0; $i -ne $1.Count ; $i++)
         if (!(Test-Path ($DIREC2)))
         {
             New-Item -Path $DIREC2 -ItemType Directory | out-null
-            Write-host -BackgroundColor Yellow "Created Directory $DIREC2"
+            write-host "----------------------"
+            Write-host -BackgroundColor Yellow -ForegroundColor black "Created Directory $DIREC2"
         }
         
         #if folder, in destPTH, exists. Moving files.
@@ -44,7 +44,7 @@ for ($i=0; $i -ne $1.Count ; $i++)
                 }
                 Move-Item -Path $PATH -Destination $TMP
                 write-host "----------------------"
-                write-host "Copying $PATH"
+                write-host "moving $PATH"
                 write-host "to $TMP"
             }
             else
@@ -52,7 +52,7 @@ for ($i=0; $i -ne $1.Count ; $i++)
                 $TMP2= $DIREC2+$FileName+"."+$filter
                 Move-Item -Path $PATH -Destination $TMP2
                 write-host "----------------------"
-                write-host "Copying $PATH"
+                write-host "moving $PATH"
                 write-host "to $TMP2"
             }
         }
