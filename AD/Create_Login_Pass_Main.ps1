@@ -476,6 +476,7 @@ if ($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].adcheck -eq "
             {
                 Set-ADAccountPassword $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].samaccountname -Reset -NewPassword (ConvertTo-SecureString $pass -AsPlainText -force)
                 write-host Пароль пользователю "-" $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].DisplayName "("$xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].samaccountname")" сброшен на "("$xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].pass")"
+                $xMF_label_prBar.Content = "Пароль пользователю "+ $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].DisplayName + " сброшен на " + "("+$xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].pass+")"
             }
             catch
             {
@@ -489,11 +490,8 @@ if ($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].adcheck -eq "
 }
 else
 {
-
     [System.Windows.Forms.MessageBox]::Show("Сначала проверьте существование пользователя","Уведомление","OK","Information")
 }
-
-
 })
 
 
