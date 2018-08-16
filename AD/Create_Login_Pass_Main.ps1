@@ -292,7 +292,7 @@ if ([Windows.Clipboard]::ContainsText() -eq $true)
     {
         $clip2 = $clip1[$i].Split("	")
         $TempFIO = $clip2[2] -replace "`n|`r",""
-        if (($clip2[0] -eq "") -and ($clip2[1] -eq ""))
+        if (($clip2[0] -eq "") -or ($clip2[1] -eq ""))
         {
         $TempFIO2 = $TempFIO
         }
@@ -343,7 +343,7 @@ if ([Windows.Clipboard]::ContainsText() -eq $true)
     {
         $clip2 = $clip1[$i].Split("	")
         $TempFIO = $clip2[2] -replace "`n|`r",""
-        if (($clip2[0] -eq "") -and ($clip2[1] -eq ""))
+        if (($clip2[0] -eq "") -or ($clip2[1] -eq ""))
         {
         $TempFIO2 = $TempFIO
         }
@@ -462,6 +462,38 @@ else
 
     $Form_2.ShowDialog() | out-null
 }
+})
+
+
+$xMF_lstv_menu_changePASS.add_click({
+
+if ($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].adcheck -eq "EXIST")
+{
+    (!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].pass -eq ""))
+    {
+        $pass = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].pass
+            try
+            {
+                Set-ADAccountPassword $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].samaccountname -Reset -NewPassword (ConvertTo-SecureString $pass -AsPlainText -force)
+                write-host Пароль пользователю "-" $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].DisplayName "("$xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].samaccountname")" сброшен на "("$xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].pass")"
+            }
+            catch
+            {
+                write-host -BackgroundColor Red -ForegroundColor white [УЗ] Ошибка назначения пароля пользователю $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].DisplayName "("$xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].samaccountname")": $error[0].Exception.Message
+            }
+    }
+    else
+    {
+        [System.Windows.Forms.MessageBox]::Show("Поле пароль пустое","Уведомление","OK","Information")
+    }
+}
+else
+{
+
+    [System.Windows.Forms.MessageBox]::Show("Сначала проверьте существование пользователя","Уведомление","OK","Information")
+}
+
+
 })
 
 

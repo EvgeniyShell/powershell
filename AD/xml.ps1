@@ -26,6 +26,7 @@
                                 <MenuItem x:Name="lstv_menu_changeAD" Header="Изменить данные в АД" Background="#FF8ABF39"/>
                                 <MenuItem x:Name="lstv_menu_moveOU" Header="Перенести пользователя в OU"/>
                                 <MenuItem x:Name="lstv_menu_change" Header="Изменить"/>
+                                <MenuItem x:Name="lstv_menu_changePASS" Header="Изменить ПАРОЛЬ"/>
                                 <MenuItem x:Name="lstv_Menu_Pass" Header="Новый пароль"/>
                                 <MenuItem x:Name="lstv_Menu_status" Header="Сменить статус на ОБЩАЯ УЗ"/>
                                 <MenuItem x:Name="lstv_Menu_copy2bufer" Header="Копировать в буфер"/>
