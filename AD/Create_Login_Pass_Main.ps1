@@ -469,7 +469,7 @@ $xMF_lstv_menu_changePASS.add_click({
 
 if ($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].adcheck -eq "EXIST")
 {
-    (!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].pass -eq ""))
+    if (!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].pass -eq ""))
     {
         $pass = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].pass
             try
