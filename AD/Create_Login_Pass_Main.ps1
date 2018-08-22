@@ -22,6 +22,8 @@ $ScriptPath = Split-Path $MyInvocation.MyCommand.Path
 . $ScriptPath\add_user_ad
 # XAML
 . $ScriptPath\xml.ps1
+#Функции для работы с группами
+. $ScriptPath\groups.ps1
 
 #. $ScriptPath\find_user_single.ps1
 #. $ScriptPath\MakeCopy.ps1
@@ -29,7 +31,8 @@ $ScriptPath = Split-Path $MyInvocation.MyCommand.Path
 $xMF_lstv_SingleUser.Items.Clear()
 $Global:OU = "OU=Test,OU=OU_OTHER,DC=ASO,DC=RT,DC=LOCAL"
 $xMF_txtbox_OU_path.Text = $Global:OU
-
+$xMF_textbox_Group_newuser.Text=""
+$xMF_textbox_Group_existuser.Text=""
 
 ###############################################################################
 #Функции для проверки данных
@@ -134,7 +137,7 @@ if ((Test-Path $ScriptPath\users.csv) -eq $true)
             $TempFIO = $csvs.displayname -replace "`n|`r",""
             $TempFIO2 = delete_spaces_FIO $TempFIO
 
-                $dep = $csvs.city -replace "`n|`r",""
+                $dep = $csvs.city -replace "`n|`r","" #Важная переменная, работает в функции telephone
                 $tel = telephone $csvs.OfficePhone
 
                 $Spisok = [PSCustomObject]@{
@@ -1072,8 +1075,174 @@ $Form_2.add_MouseDoubleClick({
 #---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ##############################################################
+#ГРУППЫ
+##############################################################
+
+
+
+$xMF_btn_groups_load.add_click({
+
+if (!($xMF_textbox_Group_newuser.Text -eq "") -and !($xMF_textbox_Group_existuser.Text -eq ""))
+{
+    if (($xMF_groups_lstv_user1.Items.IsEmpty -eq $False) -or ($xMF_groups_lstv_user2.Items.IsEmpty -eq $False))
+    {
+        $message = [System.Windows.Forms.MessageBox]::Show("Список имеет записи, он будет очищен для нового списка","Подтверждение","OKCANCEL","information")
+        if ($message -eq "OK")
+        {
+            $gr = getgroups
+            if ($gr -eq "ERROR")
+            {
+                $xMF_groups_lstv_user1.Items.Clear()
+                $xMF_groups_lstv_user2.Items.Clear()
+            }
+            elseif ($gr -eq 0)
+            {
+                [System.Windows.Forms.MessageBox]::Show("У пользователя "+$xMF_textbox_Group_existuser.Text+" нет групп","Подтверждение","OK","information")
+            }
+            else
+            {
+                $xMF_groups_lstv_user1.Items.Clear()
+                $xMF_groups_lstv_user2.Items.Clear()
+                getgroups
+                if (!($er -eq 0))
+                {
+                [System.Windows.Forms.MessageBox]::Show("Всего групп с ошибками : $er","Подтверждение","OK","information")
+                }
+            }
+
+            
+        }
+
+    }
+    else
+    {
+        $gr = getgroups
+        if ($gr -eq 0)
+        {
+            [System.Windows.Forms.MessageBox]::Show("У пользователя "+$xMF_textbox_Group_existuser.Text+" нет групп","Подтверждение","OK","information")
+        }
+        else
+        {
+            $gr
+            if (!($er -eq 0))
+            {
+            [System.Windows.Forms.MessageBox]::Show("Всего групп с ошибками : $er","Информация","OK","information")
+            }
+        }
+    }
+
+}
+else
+{
+    [System.Windows.Forms.MessageBox]::Show("Не заполнено одно из полей","information","OK","information")
+}
+
+
+})
+
+$xMF_group_btn_right.add_click({
+
+    if ($xMF_groups_lstv_user1.Items.IsEmpty)
+    {
+        [System.Windows.Forms.MessageBox]::Show("Нечего переносить","Уведомление","OK","information")
+    }
+    else
+    {
+        $xMF_groups_lstv_user2.Items.Add($xMF_groups_lstv_user1.Items[$xMF_groups_lstv_user1.SelectedIndex])
+        $xMF_groups_lstv_user1.Items.Remove($xMF_groups_lstv_user1.SelectedItem)
+    }
+
+})
+
+
+$xMF_group_btn_left.add_click({
+
+    if ($xMF_groups_lstv_user2.Items.IsEmpty)
+    {
+        [System.Windows.Forms.MessageBox]::Show("Нечего переносить","Уведомление","OK","information")
+    }
+    else
+    {
+        $xMF_groups_lstv_user1.Items.Add($xMF_groups_lstv_user2.Items[$xMF_groups_lstv_user2.SelectedIndex])
+        $xMF_groups_lstv_user2.Items.Remove($xMF_groups_lstv_user2.SelectedItem)
+    }
+
+})
+
+$xMF_group_btn_moveall.add_click({
+
+    if ($xMF_groups_lstv_user1.Items.IsEmpty)
+    {
+        [System.Windows.Forms.MessageBox]::Show("Нечего переносить","Уведомление","OK","information")
+    }
+    else
+    {
+        for ($i=0 ; $i -ne $xMF_groups_lstv_user1.Items.Count ; $i++)
+        {
+        $xMF_groups_lstv_user2.Items.Add($xMF_groups_lstv_user1.Items[$i])
+        }
+        $xMF_groups_lstv_user1.Items.Clear()
+    }
+
+})
+
+$xMF_group_btn_moveall_left.add_click({
+
+if ($xMF_groups_lstv_user2.Items.IsEmpty)
+    {
+        [System.Windows.Forms.MessageBox]::Show("Нечего переносить","Уведомление","OK","information")
+    }
+    else
+    {
+        for ($i=0 ; $i -ne $xMF_groups_lstv_user2.Items.Count ; $i++)
+        {
+        $xMF_groups_lstv_user1.Items.Add($xMF_groups_lstv_user2.Items[$i])
+        }
+        $xMF_groups_lstv_user2.Items.Clear()
+    }
+
+})
+
+
+$xMF_group_btn_deleteall.add_click({
+
+$xMF_groups_lstv_user1.Items.Clear()
+$xMF_groups_lstv_user2.Items.Clear()
+
+})
+
+
+
+$xMF_groups_lstv_user1.add_SelectionChanged({
+
+#$xMF_label_prBar.Content = $xMF_listbox_groups_newuser.Items[$xMF_listbox_groups_newuser.SelectedIndex]
+#$xMF_listbox_groups_newuser.Items.Remove($xMF_listbox_groups_newuser.SelectedIndex)
+})
+
+
+
+
+
+#---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+##############################################################
 #Всякое
 ##############################################################
+
+$xMF_btn_clearOU.add_click({
+
+if (!($global:domstruct -eq $null))
+{
+    $clearOU = [System.Windows.Forms.MessageBox]::Show("Сбросить OU список?","Уведомление","OKCANCEL","Information")
+    if ($clearOU -eq "OK")
+    {
+        $global:domstruct = $null
+    }
+}
+
+})
 
 $xMF_lstv_SingleUser.add_SelectionChanged({
 
@@ -1081,6 +1250,11 @@ textcheckad
 
 })
 
+$xMF_btn_genpass.add_click({
+
+$xMF_textbox_pass.Text = New-Password
+
+})
 
 #Сброс статусов, для повторной проверки пользователей в списке
 $xMF_status_canc.add_click({
