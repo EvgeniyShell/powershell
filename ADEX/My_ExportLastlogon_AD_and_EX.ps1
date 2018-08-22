@@ -7,7 +7,7 @@
 }
 
 
-function Show_Users_ADEX($DOU="OU=Users,OU=SOCI,OU=OU_GBU_GKU_OBU,DC=ASO,DC=RT,DC=LOCAL",$lastlogon=0) {
+function Show_Users_ADEX($DOU="OU=Users,OU=SOCI,OU=OU_GBU_GKU_OBU,DC=ASO,DC=RT,DC=LOCAL") {
 if ($DOU -eq $null) {write-host "Введите путь до OU"}
 else
 {
@@ -27,8 +27,8 @@ $spisok=@()
                 'CanonicalName' = "";
                 
             }
-$date = (Get-Date).AddMonths($lastlogon)
-$test = Get-ADUser -SearchBase $DOU -Filter {LastLogonDate -le $date} -Properties mail,lastLogonTimestamp,LastLogonDate,DisplayName,Description,whenCreated,CanonicalName -ErrorAction SilentlyContinue
+#$date = (Get-Date).AddMonths($lastlogon)
+$test = Get-ADUser -SearchBase $DOU -Filter * -Properties mail,lastLogonTimestamp,LastLogonDate,DisplayName,Description,whenCreated,CanonicalName -ErrorAction SilentlyContinue
 $i=0
 
 if ($test) {
