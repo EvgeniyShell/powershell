@@ -272,7 +272,15 @@ else
 })
 
 $xMF2_btn_PassGen.add_click({
-    $xMF2_textbox_Pass.Text = New-Password
+
+    if ($xMF_pwd_old.IsChecked)
+    {
+        $xMF2_textbox_Pass.Text = New-Password2
+    }
+    elseif ($xMF_pwd_new.IsChecked)
+    {
+        $xMF2_textbox_Pass.Text = New-Password
+    }
 })
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -410,7 +418,14 @@ else{
 
 $xMF_lstv_Menu_Pass.add_click({
 if (!($xMF_lstv_SingleUser.SelectedIndex -eq -1)){
-    $xmf_lstv_SingleUser.Items[$xmf_lstv_SingleUser.SelectedIndex].pass = New-Password
+    if ($xMF_pwd_old.IsChecked)
+    {
+        $xmf_lstv_SingleUser.Items[$xmf_lstv_SingleUser.SelectedIndex].pass = New-Password2
+    }
+    elseif ($xMF_pwd_new.IsChecked)
+    {
+        $xmf_lstv_SingleUser.Items[$xmf_lstv_SingleUser.SelectedIndex].pass = New-Password
+    }
     $xmf_lstv_SingleUser.Items.Refresh()}
 else{
     [System.Windows.Forms.MessageBox]::Show("Выделите строку с данными","Уведомление","OK","Information")}
@@ -696,7 +711,14 @@ if (!($xmf_lstv_SingleUser.Items.Count -eq 0))
     {
         for ($i=0 ; $i -ne $xmf_lstv_SingleUser.Items.Count ; $i++)
         {
-            $xmf_lstv_SingleUser.Items[$i].pass = New-Password
+            if ($xMF_pwd_old.IsChecked)
+            {
+                $xmf_lstv_SingleUser.Items[$i].pass = New-Password2
+            }
+            elseif ($xMF_pwd_new.IsChecked)
+            {
+                $xmf_lstv_SingleUser.Items[$i].pass = New-Password
+            }
         }
         $xmf_lstv_SingleUser.Items.Refresh()
         Write-Host -BackgroundColor Yellow -ForegroundColor Black [PASS] Всем пользователям сгенерированы новые пароли
@@ -1312,7 +1334,14 @@ textcheckad
 
 $xMF_btn_genpass.add_click({
 
+if ($xMF_pwd_old.IsChecked)
+{
+$xMF_textbox_pass.Text = New-Password2
+}
+elseif ($xMF_pwd_new.IsChecked)
+{
 $xMF_textbox_pass.Text = New-Password
+}
 
 })
 

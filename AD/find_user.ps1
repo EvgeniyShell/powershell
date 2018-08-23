@@ -44,7 +44,16 @@ else
 if ($user -eq $null)
 {
 #Генерируем пароль в переменную
-$pass = New-Password -PasswordLength 8
+
+if ($xMF_pwd_old.IsChecked)
+{
+    $pass = New-Password2
+}
+elseif ($xMF_pwd_new.IsChecked)
+{
+    $pass = New-Password -PasswordLength 8
+}
+
 #Генерируем логин в переменную
 $login = login "$displayname"
 

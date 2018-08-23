@@ -165,3 +165,34 @@ Begin
 		return New-Password -PasswordLength:$PasswordLength -SelectSets:$SelectSets -Invocation:($invocation+1) -CustomSets:$CustomSets -RequiredNumberofSets:$RequiredNumberofSets
 	}
 }
+
+
+
+
+function new-password2 
+{
+$CharSets = 'A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','m','n','p','q','r','s','t','u','v','w','x','y','z'
+$CharSets2 = '1','2','3','4','5','6','7','8','9'
+$CharSets3 = '!','#','%','&','+','*'
+
+$Letter = ""
+$Number = ""
+$Symbol = ""
+for ($i=0 ; $i -ne 5 ; $i++)
+{
+$Letter += Get-Random $CharSets
+}
+
+for ($i=0 ; $i -ne 2 ; $i++)
+{
+$Number += Get-Random $CharSets2
+}
+
+for ($i=0 ; $i -ne 1 ; $i++)
+{
+$Symbol += Get-Random $CharSets3
+}
+$ALLtogether = $Number +  $Symbol +  $Letter
+
+return $ALLtogether
+}

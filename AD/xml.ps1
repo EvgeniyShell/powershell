@@ -105,6 +105,8 @@
                     <Button x:Name="btn_genpass" Content="gen.pass" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70.998" Margin="473.833,359,0,0" Height="30.92"/>
                     <TextBox x:Name="textbox_pass" HorizontalAlignment="Left" Height="28.21" TextWrapping="Wrap" VerticalAlignment="Top" Width="137.002" Margin="549.831,359.46,0,0" FontSize="16" TextAlignment="Center"/>
                     <Button x:Name="btn_clearOU" Content="Сбросить" HorizontalAlignment="Left" VerticalAlignment="Top" Width="37.703" Margin="818.13,389,0,0" Height="15.5" FontSize="7"/>
+                    <RadioButton x:Name="pwd_old" Content="old" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="691.833,374.04,0,0" IsChecked="True"/>
+                    <RadioButton x:Name="pwd_new" Content="new" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="691.833,358.55,0,0"/>
 
 
                 </Grid>
