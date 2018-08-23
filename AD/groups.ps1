@@ -20,6 +20,7 @@
             {
                 $groups_load_compare = Compare-Object -ReferenceObject $groups_load_user1.MemberOf -DifferenceObject $groups_load_user2.MemberOf -IncludeEqual
                 $global:er = 0
+                
                 foreach ($strings in $groups_load_compare)
                 {
                     try
@@ -27,7 +28,7 @@
                         $strings2 = Get-ADGroup -Identity $strings.InputObject
                         if ($strings.SideIndicator -eq "=>")
                         {
-                            write-host -BackgroundColor red -ForegroundColor white У пользователя $groups_load_user1.Name нет групп $strings2.SamAccountName
+                            write-host -BackgroundColor red -ForegroundColor white "У пользователя" $groups_load_user1.Name "нет групп" $strings2.SamAccountName
                             $xMF_groups_lstv_user1.Items.Add($strings2.SamAccountName)
                         }
                     }
@@ -37,5 +38,6 @@
                         Write-Host "ERROR -> " $error[0].Exception.Message
                     }
                 }
+                return "1"
             }
 }

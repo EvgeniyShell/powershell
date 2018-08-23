@@ -1097,7 +1097,7 @@ if (!($xMF_textbox_Group_newuser.Text -eq "") -and !($xMF_textbox_Group_existuse
             }
             elseif ($gr -eq 0)
             {
-                [System.Windows.Forms.MessageBox]::Show("У пользователя "+$xMF_textbox_Group_existuser.Text+" нет групп","Подтверждение","OK","information")
+                [System.Windows.Forms.MessageBox]::Show("У пользователя"+$xMF_textbox_Group_existuser.Text+"нет групп","Подтверждение","OK","information")
             }
             else
             {
@@ -1152,6 +1152,30 @@ $xMF_group_btn_right.add_click({
         $xMF_groups_lstv_user1.Items.Remove($xMF_groups_lstv_user1.SelectedItem)
     }
 
+})
+
+$xMF_group_right.add_click({
+    if ($xMF_groups_lstv_user1.Items.IsEmpty)
+    {
+        [System.Windows.Forms.MessageBox]::Show("Нечего переносить","Уведомление","OK","information")
+    }
+    else
+    {
+        $xMF_groups_lstv_user2.Items.Add($xMF_groups_lstv_user1.Items[$xMF_groups_lstv_user1.SelectedIndex])
+        $xMF_groups_lstv_user1.Items.Remove($xMF_groups_lstv_user1.SelectedItem)
+    }
+})
+
+$xMF_group_left.add_click({
+    if ($xMF_groups_lstv_user2.Items.IsEmpty)
+    {
+        [System.Windows.Forms.MessageBox]::Show("Нечего переносить","Уведомление","OK","information")
+    }
+    else
+    {
+        $xMF_groups_lstv_user1.Items.Add($xMF_groups_lstv_user2.Items[$xMF_groups_lstv_user2.SelectedIndex])
+        $xMF_groups_lstv_user2.Items.Remove($xMF_groups_lstv_user2.SelectedItem)
+    }
 })
 
 
@@ -1214,12 +1238,48 @@ $xMF_groups_lstv_user2.Items.Clear()
 
 
 $xMF_groups_lstv_user1.add_SelectionChanged({
-
 #$xMF_label_prBar.Content = $xMF_listbox_groups_newuser.Items[$xMF_listbox_groups_newuser.SelectedIndex]
 #$xMF_listbox_groups_newuser.Items.Remove($xMF_listbox_groups_newuser.SelectedIndex)
 })
 
 
+$xMF_btn_groups_save.add_click({
+
+    if ($xMF_groups_lstv_user2.Items.IsEmpty)
+    {
+        [System.Windows.Forms.MessageBox]::Show("Список пустой","Уведомление","OK","information")
+    }
+    else
+    {
+        $message = [System.Windows.Forms.MessageBox]::Show("Добавить группы пользователю?","Уведомление","OKCANCEL","information")
+        if ($message -eq "OK")
+        {
+            $countOK = 0
+            $CountError = 0
+            $usertemp = $xMF_textbox_Group_newuser.Text
+            for ($i=0 ; $i -ne $xMF_groups_lstv_user2.Items.Count ; $i++)
+            {
+                $grouptemp = $xMF_groups_lstv_user2.Items[$i] 
+                try
+                {
+                    Add-ADGroupMember -Identity $grouptemp -Members $usertemp
+                    write-host "ОК группа -> Пользователь" $usertemp "добавлен в группу" $grouptemp
+                    $countOK++
+                }
+                catch
+                {
+                    write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка добавления ->" $Error[0].Exception.Message
+                    $CountError++
+                }
+            }
+        $xMF_groups_lstv_user1.Items.Clear()
+        $xMF_groups_lstv_user2.Items.Clear()
+        $usertemp = $null
+        [System.Windows.Forms.MessageBox]::Show("Добавлено групп: $countOK`nНе добавлено: $CountError","Уведомление","OK","information")
+        }
+    }
+
+})
 
 
 

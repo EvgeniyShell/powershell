@@ -117,7 +117,7 @@
                                 <ContextMenu.ContextMenu>
                                     <ContextMenu/>
                                 </ContextMenu.ContextMenu>
-                                <MenuItem x:Name="group_check" Header="Вставить"/>
+                                <MenuItem x:Name="group_right" Header="Вправо"/>
                             </ContextMenu>
                         </ListView.ContextMenu>
                         <ListView.View>
@@ -127,6 +127,14 @@
                         </ListView.View>
                     </ListView>
                     <ListView x:Name="groups_lstv_user2" Margin="427.5,168,0,0" HorizontalAlignment="Left" Width="251.5" Height="383" VerticalAlignment="Top">
+                        <ListView.ContextMenu>
+                            <ContextMenu>
+                                <ContextMenu.ContextMenu>
+                                    <ContextMenu/>
+                                </ContextMenu.ContextMenu>
+                                <MenuItem x:Name="group_left" Header="Влево"/>
+                            </ContextMenu>
+                        </ListView.ContextMenu>
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="samAccountname"/>
