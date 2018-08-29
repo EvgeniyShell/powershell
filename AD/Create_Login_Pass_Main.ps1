@@ -28,6 +28,7 @@ $ScriptPath = Split-Path $MyInvocation.MyCommand.Path
 #. $ScriptPath\find_user_single.ps1
 #. $ScriptPath\MakeCopy.ps1
 
+$xMF_btn_group_OU.Visibility = "Hidden"
 $xMF_lstv_SingleUser.Items.Clear()
 $Global:OU = "OU=Test,OU=OU_OTHER,DC=ASO,DC=RT,DC=LOCAL"
 $xMF_txtbox_OU_path.Text = $Global:OU
@@ -41,7 +42,7 @@ $xMF_textbox_Group_existuser.Text=""
 
 Function delete_spaces_FIO($SetFIO)
 {
-if (!($SetFIO -match "[0-9]")) 
+if (!($SetFIO -match "[0-9]"))
 {
 
     $SplitFIO = $SetFIO -split "\s"
@@ -299,6 +300,34 @@ if ([Windows.Clipboard]::ContainsText() -eq $true)
 {
     $combomail = $xMF_txtbox_mail_single.Text
     $clip1 = [windows.clipboard]::GetText().Split("`n")
+    [array]$clip3 = $clip1[0].Split("	")
+    if ($clip3.Count -eq 1)
+    {
+        $TempFIO = delete_spaces_FIO $clip3[0]
+        $Spisok = [PSCustomObject]@{
+            'firstname' = $TempFIO.Split(" ")[1] -replace "`n|`r",""
+            'lastname'= $TempFIO.Split(" ")[0] -replace "`n|`r",""
+            'displayname' = $TempFIO
+            'office' = ""
+            'OfficePhone' = ""
+            'jobtitle' = ""
+            'department' = ""
+            'company' = ""
+            'streetaddress' = ""
+            'city' = ""
+            'postalcode' = ""
+            'samaccountname' = ""
+            'pass' = ""
+            'mail' = $combomail
+            'ini' = ""
+            'adcheck' = "unchecked"
+            'obshie' = "no"
+            }
+        $xMF_lstv_SingleUser.Items.Add($Spisok)
+    }
+    else
+    {
+
     for ($i=0 ;$i -ne $clip1.Count-1 ; $i++)
     {
         $clip2 = $clip1[$i].Split("	")
@@ -336,6 +365,7 @@ if ([Windows.Clipboard]::ContainsText() -eq $true)
             }
             $xMF_lstv_SingleUser.Items.Add($Spisok)
     }
+    } #($clip3.Count -eq 1)
 }
 else
 {
@@ -350,6 +380,33 @@ if ([Windows.Clipboard]::ContainsText() -eq $true)
 {
     $combomail = $xMF_txtbox_mail_single.Text
     $clip1 = [windows.clipboard]::GetText().Split("`n")
+    [array]$clip3 = $clip1[0].Split("	")
+    if ($clip3.Count -eq 1)
+    {
+        $TempFIO = delete_spaces_FIO $clip3[0]
+        $Spisok = [PSCustomObject]@{
+            'firstname' = $TempFIO.Split(" ")[1] -replace "`n|`r",""
+            'lastname'= $TempFIO.Split(" ")[0] -replace "`n|`r",""
+            'displayname' = $TempFIO
+            'office' = ""
+            'OfficePhone' = ""
+            'jobtitle' = ""
+            'department' = ""
+            'company' = ""
+            'streetaddress' = ""
+            'city' = ""
+            'postalcode' = ""
+            'samaccountname' = ""
+            'pass' = ""
+            'mail' = $combomail
+            'ini' = ""
+            'adcheck' = "unchecked"
+            'obshie' = "no"
+            }
+        $xMF_lstv_SingleUser.Items.Add($Spisok)
+    }
+    else
+    {
     for ($i=0 ;$i -ne $clip1.Count-1 ; $i++)
     {
         $clip2 = $clip1[$i].Split("	")
@@ -388,6 +445,7 @@ if ([Windows.Clipboard]::ContainsText() -eq $true)
             $xMF_lstv_SingleUser.Items.Add($Spisok)
 
     }
+    }# ($clip3.Count -eq 1)
 }
 else
 {
@@ -523,6 +581,8 @@ if ($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].adcheck -eq "
     {
         #http://www.computerperformance.co.uk/Logon/LDAP_attributes_active_directory.htm
         $login = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].samaccountname
+        $UserADinfo = Get-ADUser $login -Properties Description | select Enabled,Description
+
         $hash = @{}
         if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].Office -eq "")){$hash.physicalDeliveryOfficeName = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].office;}
         if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].OfficePhone -eq "")){$hash.telephoneNumber = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].officephone;}
@@ -535,9 +595,36 @@ if ($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].adcheck -eq "
         if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].mail -eq "")){$hash.mail = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].mail;}
         if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].ini -eq "")){$hash.initials = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].ini;}
 
+        
+        if ($UserADinfo.Enabled -eq $False)
+        {
+            try
+            {
+                Enable-ADAccount -Identity $login
+                write-host "Учетная запись пользователя" $login "включена"
+            }
+            catch
+            {
+                write-host -BackgroundColor Red -ForegroundColor Yellow "Учетную запись пользователя" $login "включить нельзя" -> $error[0].Exception.Message
+            }
+        }
+
+        if (!($UserADinfo.Description -eq $null))
+        {
+            try
+            {
+                Set-ADUser $login -Description $null
+                write-host "Учетной записи пользователя" $login "поле Description очищено"
+            }
+            catch
+            {
+                write-host -BackgroundColor Red -ForegroundColor Yellow "Учетной записи пользователя" $login "поле Description очистить нельзя" -> $error[0].Exception.Message
+            }
+        }
+
         try
         {
-            Set-ADUser $login -Replace $hash
+            Set-ADUser $login -Replace $hash -Description $null
             write-host Новые данные пользователю "-" $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].DisplayName "("$xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].samaccountname")" внесены
             $xMF_label_prBar.Content = "Новые данные пользователю - "+$xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].DisplayName+"("+$xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].samaccountname+") внесены"
         }
@@ -1104,6 +1191,9 @@ $Form_2.add_MouseDoubleClick({
 
 $xMF_btn_groups_load.add_click({
 
+if ($xMF_group_radio_one.IsChecked)
+{
+
 if (!($xMF_textbox_Group_newuser.Text -eq "") -and !($xMF_textbox_Group_existuser.Text -eq ""))
 {
     if (($xMF_groups_lstv_user1.Items.IsEmpty -eq $False) -or ($xMF_groups_lstv_user2.Items.IsEmpty -eq $False))
@@ -1159,6 +1249,16 @@ else
     [System.Windows.Forms.MessageBox]::Show("Не заполнено одно из полей","information","OK","information")
 }
 
+} # конец $xMF_group_radio_one.IsChecked
+
+
+if ($xMF_group_radio_many.IsChecked)
+{
+    if (!($xMF_textbox_Group_newuser.Text -eq "") -and !($xMF_textbox_Group_existuser.Text -eq ""))
+    {
+        
+    }
+}
 
 })
 
@@ -1267,6 +1367,8 @@ $xMF_groups_lstv_user1.add_SelectionChanged({
 
 $xMF_btn_groups_save.add_click({
 
+if ($xMF_group_radio_one.IsChecked)
+{
     if ($xMF_groups_lstv_user2.Items.IsEmpty)
     {
         [System.Windows.Forms.MessageBox]::Show("Список пустой","Уведомление","OK","information")
@@ -1301,8 +1403,45 @@ $xMF_btn_groups_save.add_click({
         }
     }
 
+} # Конец $xMF_group_radio_one.IsChecked
+
 })
 
+$xMF_group_radio_one.add_click({
+
+$xMF_btn_group_OU.Visibility = "Hidden"
+$xMF_group_right.IsEnabled = $True
+$xMF_group_left.IsEnabled = $True
+$xMF_group_label_user1.Content = "Новый пользователь"
+$xMF_group_label_user2.Content = "Существующий пользователь"
+$xMF_group_label_lstv1.Content = "Группы существующего пользователя"
+$xMF_group_label_lstv2.Content = "Группы для нового пользователя"
+$xMF_group_btn_moveall_left.IsEnabled = $True
+$xMF_group_btn_moveall.IsEnabled = $True
+$xMF_group_btn_right.IsEnabled = $True
+$xMF_group_btn_left.IsEnabled = $True
+
+})
+
+$xMF_group_radio_many.add_click({
+
+$xMF_btn_group_OU.Visibility = "Visible"
+$xMF_group_right.IsEnabled = $false
+$xMF_group_left.IsEnabled = $false
+$xMF_group_label_user1.Content = "Существующий пользователь"
+$xMF_group_label_user2.Content = "Путь к OU"
+$xMF_group_label_lstv1.Content = "Пользователи"
+$xMF_group_label_lstv2.Content = "Группы для добавления"
+$xMF_group_btn_moveall_left.IsEnabled = $false
+$xMF_group_btn_moveall.IsEnabled = $false
+$xMF_group_btn_right.IsEnabled = $false
+$xMF_group_btn_left.IsEnabled = $false
+
+})
+
+$xMF_btn_group_OU.add_click({
+$xMF_textbox_Group_existuser.Text = Get-OUDialog-start
+})
 
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1368,9 +1507,19 @@ if ($xmf_lstv_SingleUser.Items.Count -cge 1)
 
 
 $xMF_Btn_Exit.add_click({
+
     $Form_2.Close()
     $Form_Main.Close()
+
 })
 
-
 $Form_Main.ShowDialog() | out-null
+
+Select-Xml $xaml -xpath "//*[@*[contains(translate(name(.),'n','N'),'Name')]]" | Foreach {$_.Node} | Foreach {Remove-Variable -Name "xMF_$($_.Name)"}
+Select-Xml $xaml2 -xpath "//*[@*[contains(translate(name(.),'n','N'),'Name')]]" | Foreach {$_.Node} | Foreach {Remove-Variable -Name "xMF2_$($_.Name)"}
+Remove-Variable -Name xaml
+Remove-Variable -Name xaml2
+Remove-Variable -Name XReader
+Remove-Variable -Name XReader2
+Remove-Variable -Name Form_Main
+Remove-Variable -Name Form_2

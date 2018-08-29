@@ -41,3 +41,18 @@
                 return "1"
             }
 }
+
+
+function getusersgroups
+{
+
+    try
+    {
+        
+    }
+    catch
+    {
+        
+    }
+
+}

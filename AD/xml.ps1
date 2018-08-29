@@ -7,6 +7,9 @@
         xmlns:local="clr-namespace:WpfApp1"
         Title="Добавление пользователей v.1.0" Height="800" Width="1500" ShowInTaskbar="True" WindowStartupLocation="CenterScreen" MinHeight="800" MinWidth="1400">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <TabControl Margin="10,32.304,10,29.499">
             <TabItem x:Name="Tab_singleUser" Header="Добавление пользователя">
                 <Grid Margin="0,0,2.001,0.237">
@@ -114,12 +117,13 @@
             <TabItem x:Name="Tab_Groups" Header="Группы">
                 <Grid Margin="0,0,-6.5,-1.263">
                     <ListView x:Name="groups_lstv_user1" Margin="25.5,168,0,0" HorizontalAlignment="Left" Width="253.5" Height="383" VerticalAlignment="Top">
-                            <ListView.ContextMenu>
+                        <ListView.ContextMenu>
                             <ContextMenu>
                                 <ContextMenu.ContextMenu>
                                     <ContextMenu/>
                                 </ContextMenu.ContextMenu>
                                 <MenuItem x:Name="group_right" Header="Вправо"/>
+                                <MenuItem x:Name="group_delete_lstv1" Header="Удалить"/>
                             </ContextMenu>
                         </ListView.ContextMenu>
                         <ListView.View>
@@ -135,6 +139,7 @@
                                     <ContextMenu/>
                                 </ContextMenu.ContextMenu>
                                 <MenuItem x:Name="group_left" Header="Влево"/>
+                                <MenuItem x:Name="group_delete_lstv2" Header="Удалить"/>
                             </ContextMenu>
                         </ListView.ContextMenu>
                         <ListView.View>
@@ -147,15 +152,23 @@
                     <Button x:Name="btn_groups_save" Content="Добавление пользователя в группы" Margin="427.5,556,0,0" HorizontalAlignment="Left" Width="253.5" Height="100" VerticalAlignment="Top"/>
                     <TextBox x:Name="textbox_Group_newuser" TextWrapping="Wrap" Margin="25.5,42,0,0" HorizontalAlignment="Left" Width="253.5" Height="23" VerticalAlignment="Top"/>
                     <TextBox x:Name="textbox_Group_existuser" TextWrapping="Wrap" Margin="25.5,105,0,0" HorizontalAlignment="Left" Width="253.5" Height="23" VerticalAlignment="Top"/>
-                    <Label Content="Новый пользователь" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="25.5,11.04,0,0"/>
-                    <Label Content="Существующий пользователь" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="25.5,74.04,0,0"/>
-                    <Label Content="Группы существующего пользователя" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="25.5,142.04,0,0" Width="253.5"/>
-                    <Label Content="Группы для нового пользователя" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="427.5,142.04,0,0" Width="251.5"/>
+                    <Label x:Name="group_label_user1" Content="Новый пользователь" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="25.5,11.04,0,0"/>
+                    <Label x:Name="group_label_user2" Content="Существующий пользователь" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="25.5,74.04,0,0"/>
+                    <Label x:Name="group_label_lstv1" Content="Группы существующего пользователя" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="25.5,142.04,0,0" Width="253.5"/>
+                    <Label x:Name="group_label_lstv2" Content="Группы для нового пользователя" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="427.5,142.04,0,0" Width="251.5"/>
                     <Button x:Name="group_btn_right" Content="&gt;" HorizontalAlignment="Left" Margin="284,297.02,0,0" VerticalAlignment="Top" Width="138.5" Height="27.46"/>
                     <Button x:Name="group_btn_left" Content="&lt;" HorizontalAlignment="Left" Margin="284,343.52,0,0" VerticalAlignment="Top" Width="138.5" Height="27.46"/>
                     <Button x:Name="group_btn_deleteall" Content="Очистить" HorizontalAlignment="Left" Margin="284,388.52,0,0" VerticalAlignment="Top" Width="138.5" Height="27.46"/>
                     <Button x:Name="group_btn_moveall" Content="&gt;&gt;&gt;" HorizontalAlignment="Left" Margin="284,250.52,0,0" VerticalAlignment="Top" Width="138.5" Height="27.46"/>
                     <Button x:Name="group_btn_moveall_left" Content="&lt;&lt;&lt;" HorizontalAlignment="Left" Margin="284,205.52,0,0" VerticalAlignment="Top" Width="138.5" Height="27.46"/>
+                    <GroupBox Header="Копирование групп" Margin="340.5,15.04,0,0" HorizontalAlignment="Left" Width="211" Height="112.96" VerticalAlignment="Top">
+                        <Grid HorizontalAlignment="Left" Height="90.667" Margin="0,0,-2,-0.667" VerticalAlignment="Top" Width="201">
+                            <RadioButton x:Name="group_radio_one" Content="С источника на одного" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,10,0,0" IsChecked="True"/>
+                            <RadioButton x:Name="group_radio_many" Content="С источника для всех в OU" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,29.96,0,0"/>
+                            <RadioButton x:Name="group_radio_many2" Content="С источника для нескольких" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,49.92,0,0"/>
+                        </Grid>
+                    </GroupBox>
+                    <Button x:Name="btn_group_OU" Content="OU" HorizontalAlignment="Left" VerticalAlignment="Top" Width="40.37" Height="23" Margin="284,105,0,0"/>
                 </Grid>
             </TabItem>
         </TabControl>
@@ -184,6 +197,8 @@
 $XReader=(New-Object System.Xml.XmlNodeReader $xaml)
 $Form_Main=[Windows.Markup.XamlReader]::Load( $XReader )
 $xaml.SelectNodes("//*[@*[contains(translate(name(.),'n','N'),'Name')]]") | %{Set-Variable -Name "xMF_$($_.Name)" -Value $Form_Main.FindName($_.Name)}
+
+
 
 [xml]$xaml2 = @"
 <Window x:Name="Window1"
@@ -241,3 +256,4 @@ $xaml.SelectNodes("//*[@*[contains(translate(name(.),'n','N'),'Name')]]") | %{Se
 $XReader2=(New-Object System.Xml.XmlNodeReader $xaml2)
 $Form_2=[Windows.Markup.XamlReader]::Load( $XReader2 )
 $xaml2.SelectNodes("//*[@*[contains(translate(name(.),'n','N'),'Name')]]") | %{Set-Variable -Name "xMF2_$($_.Name)" -Value $Form_2.FindName($_.Name)}
+
