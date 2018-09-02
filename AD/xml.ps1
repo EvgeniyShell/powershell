@@ -184,6 +184,18 @@
                 <MenuItem x:Name="btn_allobshie" Header="Пометить все записи как ОБЩИЕ УЗ"/>
                 <MenuItem x:Name="btn_exporttoconsole" Header="Выгрузить в Console список"/>
             </MenuItem>
+            <MenuItem Header="Настройки">
+                <MenuItem Header="Изменение данных">
+                    <CheckBox Content="office"/>
+                    <CheckBox Content="OfficePhone"/>
+                    <CheckBox Content="jobtitle"/>
+                    <CheckBox Content="department"/>
+                    <CheckBox Content="company"/>
+                    <CheckBox Content="streetaddress"/>
+                    <CheckBox Content="city"/>
+                    <CheckBox Content="postalcode"/>
+                </MenuItem>
+            </MenuItem>
         </Menu>
         <ProgressBar x:Name="prBar" Margin="10,0,10,10" Background="#FFE6E6E6" RenderTransformOrigin="0,0" Height="14.499" VerticalAlignment="Bottom"/>
         <Label x:Name="label_prBar" Content="" Margin="10,0" FontSize="10" Height="29.499" VerticalAlignment="Bottom"/>
