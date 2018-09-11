@@ -18,7 +18,7 @@
                     </Grid.ColumnDefinitions>
                     <Button Content="Button" HorizontalAlignment="Left" Height="100" Margin="0,0,0,-100" VerticalAlignment="Top" Width="0"/>
                     <Button x:Name="btn_clearsingle" Content="Очистить списки" HorizontalAlignment="Left" Margin="11.333,359.46,0,0" Width="232.5" Height="30.46" VerticalAlignment="Top"/>
-                    <ListView x:Name="lstv_SingleUser" Margin="10,10,8.5,0" Height="295" VerticalAlignment="Top">
+                    <ListView x:Name="lstv_SingleUser" Margin="10,10,8.5,0" Height="295" VerticalAlignment="Top" AlternationCount="2">
                         <ListView.ContextMenu>
                             <ContextMenu>
                                 <ContextMenu.ContextMenu>
@@ -59,6 +59,8 @@
                                 <GridViewColumn Header="obshie" DisplayMemberBinding="{Binding obshie}"/>
                             </GridView>
                         </ListView.View>
+
+
                     </ListView>
                     <Button x:Name="btn_AddSingle" Content="Добавить из буфера в ListView (_V)" Margin="11.333,324,0,0" HorizontalAlignment="Left" Width="232.5" Height="30.46" VerticalAlignment="Top"/>
                     <ListView x:Name="lstv_SingleUser_Exist" Margin="11.333,409.5,7.167,10.5">
@@ -174,7 +176,6 @@
         </TabControl>
         <Menu Height="27.304" VerticalAlignment="Top">
             <MenuItem Header="Файл" Height="27.304" Width="43.135" Background="{x:Null}" RenderTransformOrigin="0.5,0.5">
-
                 <MenuItem x:Name="Btn_LoadFiles" Header="Загрузить данные из файла Users.csv" Height="23" Margin="0,0,0.998,0"/>
                 <MenuItem x:Name="btn_export" Header="Выгрузить данные из списка в файл"/>
                 <MenuItem x:Name="Btn_Exit" Header="Выход" Height="23" Margin="0,0,0.998,0"/>
@@ -186,14 +187,16 @@
             </MenuItem>
             <MenuItem Header="Настройки">
                 <MenuItem Header="Изменение данных">
-                    <CheckBox Content="office"/>
-                    <CheckBox Content="OfficePhone"/>
-                    <CheckBox Content="jobtitle"/>
-                    <CheckBox Content="department"/>
-                    <CheckBox Content="company"/>
-                    <CheckBox Content="streetaddress"/>
-                    <CheckBox Content="city"/>
-                    <CheckBox Content="postalcode"/>
+                    <CheckBox x:Name="chk_all" Content="Убрать всем" IsChecked="True"/>
+                    <Label Content="-------------------" IsEnabled="False"/>
+                    <CheckBox x:Name="chk_office" Content="office" IsChecked="True"/>
+                    <CheckBox x:Name="chk_OfficePhone" Content="OfficePhone" IsChecked="True"/>
+                    <CheckBox x:Name="chk_jobtitle" Content="jobtitle" IsChecked="True"/>
+                    <CheckBox x:Name="chk_department" Content="department" IsChecked="True"/>
+                    <CheckBox x:Name="chk_company" Content="company" IsChecked="True"/>
+                    <CheckBox x:Name="chk_streetaddress" Content="streetaddress" IsChecked="True"/>
+                    <CheckBox x:Name="chk_city" Content="city" IsChecked="True"/>
+                    <CheckBox x:Name="chk_postalcode" Content="postalcode" IsChecked="True"/>
                 </MenuItem>
             </MenuItem>
         </Menu>

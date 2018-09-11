@@ -34,6 +34,7 @@ $Global:OU = "OU=Test,OU=OU_OTHER,DC=ASO,DC=RT,DC=LOCAL"
 $xMF_txtbox_OU_path.Text = $Global:OU
 $xMF_textbox_Group_newuser.Text=""
 $xMF_textbox_Group_existuser.Text=""
+$global:checklog = 0
 
 ###############################################################################
 #Функции для проверки данных
@@ -78,7 +79,10 @@ if (!($SetFIO -match "[0-9]"))
 }
 else
 {
-   return "ERROR - Цифра в ФИО"
+    write-host "Цифра в ФИО -> Удаление ($SetFIO)"
+    $SetFIO = $SetFIO -replace "[0-9]",""
+    delete_spaces_FIO($SetFIO)
+   #return "ERROR - Цифра в ФИО"
    #return $SetFIO
 }
 
@@ -112,6 +116,20 @@ else
 {
     return $number
 }
+}
+
+#Функция проверки количества символов
+function symbol ($check)
+{
+    if ($check.Length -gt 64)
+    {
+        $global:checklog++
+        return "БОЛЬШЕ 64 СИМВОЛОВ"
+    }
+    else
+    {
+        return $check -replace "`n|`r",""
+    }
 }
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -298,12 +316,15 @@ $xMF_btn_AddSingle.add_click({
 
 if ([Windows.Clipboard]::ContainsText() -eq $true)
 {
+    $global:checklog = 0
     $combomail = $xMF_txtbox_mail_single.Text
     $clip1 = [windows.clipboard]::GetText().Split("`n")
-    [array]$clip3 = $clip1[0].Split("	")
-    if ($clip3.Count -eq 1)
+    [array]$clip3 = $clip1[0].Split("	") #переменная Для проверки, что скопирована только 1 ячейка с Эксэль
+    if ($clip3.Count -eq 1) #проверка на наличие 1 переменной в эксэль
     {
-        $TempFIO = delete_spaces_FIO $clip3[0]
+        for ($i=0 ;$i -ne $clip1.Count-1 ; $i++) #Цикл, если скопировано много строк, по 1 ячейке в каждой строке.
+        {
+        $TempFIO = delete_spaces_FIO $clip1[$i]
         $Spisok = [PSCustomObject]@{
             'firstname' = $TempFIO.Split(" ")[1] -replace "`n|`r",""
             'lastname'= $TempFIO.Split(" ")[0] -replace "`n|`r",""
@@ -324,6 +345,7 @@ if ([Windows.Clipboard]::ContainsText() -eq $true)
             'obshie' = "no"
             }
         $xMF_lstv_SingleUser.Items.Add($Spisok)
+        }
     }
     else
     {
@@ -345,18 +367,18 @@ if ([Windows.Clipboard]::ContainsText() -eq $true)
             $tel = telephone $clip2[4]
             
             $Spisok = [PSCustomObject]@{
-            'firstname' = $clip2[0] -replace "`n|`r",""
-            'lastname'= $clip2[1] -replace "`n|`r",""
-            'displayname' = $TempFIO2
-            'office' = $clip2[3] -replace "`n|`r",""
-            'OfficePhone' = $tel
-            'jobtitle' = $clip2[5] -replace "`n|`r",""
-            'department' = $clip2[6] -replace "`n|`r",""
-            'company' = $clip2[7] -replace "`n|`r",""
-            'streetaddress' = $clip2[8] -replace "`n|`r",""
-            'city' = $clip2[9] -replace "`n|`r",""
-            'postalcode' = $clip2[10] -replace "`n|`r",""
-            'samaccountname' = $clip2[11] -replace "`n|`r",""
+            'firstname' = symbol($clip2[0])
+            'lastname'= symbol($clip2[1])
+            'displayname' = symbol($TempFIO2)
+            'office' = symbol($clip2[3])
+            'OfficePhone' = symbol($tel)
+            'jobtitle' = symbol($clip2[5])
+            'department' = symbol($clip2[6])
+            'company' = symbol($clip2[7])
+            'streetaddress' = symbol($clip2[8])
+            'city' = symbol($clip2[9])
+            'postalcode' = symbol($clip2[10])
+            'samaccountname' = symbol($clip2[11])
             'pass' = ""
             'mail' = $combomail
             'ini' = ""
@@ -366,6 +388,12 @@ if ([Windows.Clipboard]::ContainsText() -eq $true)
             $xMF_lstv_SingleUser.Items.Add($Spisok)
     }
     } #($clip3.Count -eq 1)
+
+    if ($global:checklog -ge 1)
+    {
+    [System.Windows.Forms.MessageBox]::Show("Ячейки с > 64 символами: $global:checklog","Уведомление","OK","Warning")
+    }
+
 }
 else
 {
@@ -378,12 +406,15 @@ $xmf_lstv_Menu_paste.add_click({
 
 if ([Windows.Clipboard]::ContainsText() -eq $true)
 {
+    $global:checklog = 0
     $combomail = $xMF_txtbox_mail_single.Text
     $clip1 = [windows.clipboard]::GetText().Split("`n")
-    [array]$clip3 = $clip1[0].Split("	")
-    if ($clip3.Count -eq 1)
+    [array]$clip3 = $clip1[0].Split("	") #переменная Для проверки, что скопирована только 1 ячейка с Эксэль
+    if ($clip3.Count -eq 1) #проверка на наличие 1 переменной в эксэль
     {
-        $TempFIO = delete_spaces_FIO $clip3[0]
+        for ($i=0 ;$i -ne $clip1.Count-1 ; $i++) #Цикл, если скопировано много строк, по 1 ячейке в каждой строке.
+        {
+        $TempFIO = delete_spaces_FIO $clip1[$i]
         $Spisok = [PSCustomObject]@{
             'firstname' = $TempFIO.Split(" ")[1] -replace "`n|`r",""
             'lastname'= $TempFIO.Split(" ")[0] -replace "`n|`r",""
@@ -404,6 +435,7 @@ if ([Windows.Clipboard]::ContainsText() -eq $true)
             'obshie' = "no"
             }
         $xMF_lstv_SingleUser.Items.Add($Spisok)
+        }
     }
     else
     {
@@ -424,18 +456,18 @@ if ([Windows.Clipboard]::ContainsText() -eq $true)
             $tel = telephone $clip2[4]
 
             $Spisok = [PSCustomObject]@{
-            'firstname' = $clip2[0] -replace "`n|`r",""
-            'lastname'= $clip2[1] -replace "`n|`r",""
-            'displayname' = $TempFIO2
-            'office' = $clip2[3] -replace "`n|`r",""
-            'OfficePhone' = $tel
-            'jobtitle' = $clip2[5] -replace "`n|`r",""
-            'department' = $clip2[6] -replace "`n|`r",""
-            'company' = $clip2[7] -replace "`n|`r",""
-            'streetaddress' = $clip2[8] -replace "`n|`r",""
-            'city' = $clip2[9] -replace "`n|`r",""
-            'postalcode' = $clip2[10] -replace "`n|`r",""
-            'samaccountname' = $clip2[11] -replace "`n|`r",""
+            'firstname' = symbol($clip2[0])
+            'lastname'= symbol($clip2[1])
+            'displayname' = symbol($TempFIO2)
+            'office' = symbol($clip2[3])
+            'OfficePhone' = symbol($tel)
+            'jobtitle' = symbol($clip2[5])
+            'department' = symbol($clip2[6])
+            'company' = symbol($clip2[7])
+            'streetaddress' = symbol($clip2[8])
+            'city' = symbol($clip2[9])
+            'postalcode' = symbol($clip2[10])
+            'samaccountname' = symbol($clip2[11])
             'pass' = ""
             'mail' = $combomail
             'ini' = ""
@@ -446,6 +478,11 @@ if ([Windows.Clipboard]::ContainsText() -eq $true)
 
     }
     }# ($clip3.Count -eq 1)
+
+    if ($global:checklog -ge 1)
+    {
+    [System.Windows.Forms.MessageBox]::Show("Ячейки с > 64 символами: $global:checklog","Уведомление","OK","Warning")
+    }
 }
 else
 {
@@ -453,6 +490,7 @@ else
 }
 
 })
+
 
 
 $xmf_btn_clearsingle.add_click({
@@ -571,6 +609,36 @@ else
 })
 
 
+$xMF_chk_all.add_click({
+
+if ($xMF_chk_all.IsChecked -eq $true)
+{
+$xMF_chk_all.Content = "Убрать всем"
+$xMF_chk_office.IsChecked = $True
+$xMF_chk_OfficePhone.IsChecked = $True
+$xMF_chk_jobtitle.IsChecked = $True
+$xMF_chk_department.IsChecked = $True
+$xMF_chk_company.IsChecked = $True
+$xMF_chk_streetaddress.IsChecked = $True
+$xMF_chk_city.IsChecked = $True
+$xMF_chk_postalcode.IsChecked = $True
+}
+else
+{
+$xMF_chk_all.Content = "Выделить все"
+$xMF_chk_office.IsChecked = $False
+$xMF_chk_OfficePhone.IsChecked = $False
+$xMF_chk_jobtitle.IsChecked = $False
+$xMF_chk_department.IsChecked = $False
+$xMF_chk_company.IsChecked = $False
+$xMF_chk_streetaddress.IsChecked = $False
+$xMF_chk_city.IsChecked = $False
+$xMF_chk_postalcode.IsChecked = $False
+}
+
+
+})
+
 $xMF_lstv_menu_changeAD.add_click({
 
 if ($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].adcheck -eq "EXIST")
@@ -584,14 +652,14 @@ if ($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].adcheck -eq "
         $UserADinfo = Get-ADUser $login -Properties Description | select Enabled,Description
 
         $hash = @{}
-        if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].Office -eq "")){$hash.physicalDeliveryOfficeName = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].office;}
-        if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].OfficePhone -eq "")){$hash.telephoneNumber = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].officephone;}
-        if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].jobtitle -eq "")){$hash.title = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].jobtitle;}
-        if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].Department -eq "")){$hash.department = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].department;}else{Set-ADUser $login -Department $null}
-        if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].Company -eq "")){$hash.company = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].company;}
-        if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].StreetAddress -eq "")){$hash.streetAddress = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].streetaddress;}
-        if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].City -eq "")){$hash.l = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].city;}
-        if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].PostalCode -eq "")){$hash.postalCode = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].postalcode;}
+        if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].Office -eq "")){$hash.physicalDeliveryOfficeName = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].office;}elseif($xmf_chk_office.isChecked -eq $true){Set-ADUser $login -Office $null}
+        if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].OfficePhone -eq "")){$hash.telephoneNumber = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].officephone;}elseif($xMF_chk_OfficePhone.isChecked -eq $true){Set-ADUser $login -OfficePhone $null}
+        if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].jobtitle -eq "")){$hash.title = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].jobtitle;}elseif($xMF_chk_jobtitle.isChecked -eq $true){Set-ADUser $login -Title $null}
+        if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].Department -eq "")){$hash.department = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].department;}elseif($xMF_chk_department.isChecked -eq $true){Set-ADUser $login -Department $null}
+        if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].Company -eq "")){$hash.company = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].company;}elseif($xMF_chk_company.isChecked -eq $true){Set-ADUser $login -Company $null}
+        if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].StreetAddress -eq "")){$hash.streetAddress = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].streetaddress;}elseif($xMF_chk_streetaddress.isChecked -eq $true){Set-ADUser $login -StreetAddress $null}
+        if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].City -eq "")){$hash.l = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].city;}elseif($xMF_chk_city.isChecked -eq $true){Set-ADUser $login -City $null}
+        if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].PostalCode -eq "")){$hash.postalCode = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].postalcode;}elseif($xMF_chk_postalcode.isChecked -eq $true){Set-ADUser $login -PostalCode $null}
         if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].mail -eq "")){$hash.mail = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].mail;}
         if(!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].ini -eq "")){$hash.initials = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].ini;}
 
