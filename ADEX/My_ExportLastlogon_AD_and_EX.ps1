@@ -24,10 +24,10 @@ $spisok=@()
                 'Description' = "";
                 'Enabled' = "";
                 'WhenCreated' = "";
+                'WhenMailboxCreated' = "";
                 'CanonicalName' = "";
-                
+                'CanonicalName2' = "";
             }
-#$date = (Get-Date).AddMonths($lastlogon)
 $test = Get-ADUser -SearchBase $DOU -Filter * -Properties mail,lastLogonTimestamp,LastLogonDate,DisplayName,Description,whenCreated,CanonicalName -ErrorAction SilentlyContinue
 $i=0
 
@@ -39,23 +39,27 @@ Write-Host -BackgroundColor Yellow -ForegroundColor Black "Количество 
 foreach ($tests in $test) 
     {
     $lastlogon = [DateTime]::FromFileTime($tests.lastLogonTimestamp)
-    $err = Get-MailboxStatistics $tests.SamAccountName -ErrorAction SilentlyContinue | select DisplayName,Database,LastLogonTime,DatabaseProhibitSendQuota,TotalItemSize
-        if ($err)
+    $err2 = get-mailbox $tests.SamAccountName -ErrorAction SilentlyContinue | select ProhibitSendQuota,WhenMailboxCreated,DisplayName,Database
+    $cannonical = $tests.CanonicalName -replace "ASO.RT.LOCAL/" -replace "OU_GBU_GKU_OBU/" -replace "Users/" -replace "Inactive/" -replace "OU_RT/" -replace "/"+$tests.DisplayName
+    $cannonical2 = $cannonical.Split("/")
+        if ($err2)
         {
-            $err2 = get-mailbox $tests.SamAccountName -ErrorAction SilentlyContinue | select ProhibitSendQuota
+            $err = Get-MailboxStatistics $tests.SamAccountName -ErrorAction SilentlyContinue | select LastLogonTime,DatabaseProhibitSendQuota,TotalItemSize
+            if ($err){
             $GB = SizeInBytes([string]$err.DatabaseProhibitSendQuota.Value)
             $GB2 = SizeInBytes([string]$err.TotalItemSize.value)
 
+
             if ($err2.ProhibitSendQuota -eq "Unlimited") {$out = "Unlimited"} 
             else{$GB3 = SizeInBytes([string]$err2.ProhibitSendQuota)
-            $out = "{0:N2}" -f $($GB3/1GB) +" GB"}
-            
+            $out = "{0:N2}" -f $($GB3/1GB) +" GB"}     
+            }
 
             $i++
             $spisok += [PSCustomObject]@{
-                'DisplayName' = $err.DisplayName;
+                'DisplayName' = $err2.DisplayName;
                 'SamAccountname' = $tests.SamAccountName;
-                'Database' = $err.Database;
+                'Database' = $err2.Database;
                 'LastLogonAD' = $lastlogon
                 'LastLogonEX' = $err.LastLogonTime;
                 'QuotaMBX' = "{0:N2}" -f $($GB/1GB) +" GB";
@@ -64,11 +68,13 @@ foreach ($tests in $test)
                 'Description' = $tests.Description;
                 'Enabled' = $tests.enabled;
                 'WhenCreated' = $tests.whenCreated;
+                'WhenMailboxCreated' = $err2.WhenMailboxCreated;
                 'CanonicalName' = $tests.CanonicalName;
+                'CanonicalName2' = $cannonical;
                 
             }
         }
-        else 
+        else
         {
             $i++
             $spisok += [PSCustomObject]@{
@@ -77,12 +83,15 @@ foreach ($tests in $test)
                 'Database' = "";
                 'LastLogonAD' = $lastlogon;
                 'LastLogonEX' = "";
-                'Quota' = "";
+                'QuotaMBX' = "";
+                'QuataMail' = "";
                 'TotalItemSize' = "";
                 'Description' = $tests.Description;
                 'Enabled' = $tests.enabled;
                 'WhenCreated' = $tests.whenCreated;
+                'WhenMailboxCreated' = "";
                 'CanonicalName' = $tests.CanonicalName;
+                'CanonicalName2' = $cannonical;
 
             }
         }

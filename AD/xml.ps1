@@ -59,8 +59,6 @@
                                 <GridViewColumn Header="obshie" DisplayMemberBinding="{Binding obshie}"/>
                             </GridView>
                         </ListView.View>
-
-
                     </ListView>
                     <Button x:Name="btn_AddSingle" Content="Добавить из буфера в ListView (_V)" Margin="11.333,324,0,0" HorizontalAlignment="Left" Width="232.5" Height="30.46" VerticalAlignment="Top"/>
                     <ListView x:Name="lstv_SingleUser_Exist" Margin="11.333,409.5,7.167,10.5">
@@ -198,6 +196,7 @@
                     <CheckBox x:Name="chk_city" Content="city" IsChecked="True"/>
                     <CheckBox x:Name="chk_postalcode" Content="postalcode" IsChecked="True"/>
                 </MenuItem>
+                <CheckBox x:Name="chk_hideshow" Content="Спрятать консоль" IsChecked="True"/>
             </MenuItem>
         </Menu>
         <ProgressBar x:Name="prBar" Margin="10,0,10,10" Background="#FFE6E6E6" RenderTransformOrigin="0,0" Height="14.499" VerticalAlignment="Bottom"/>

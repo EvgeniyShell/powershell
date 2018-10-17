@@ -1,6 +1,14 @@
 ﻿Clear-Host
 
 Add-Type -AssemblyName PresentationFramework, PresentationCore, System.Windows.Forms
+Add-Type -Name Window -Namespace Console -MemberDefinition '
+[DllImport("Kernel32.dll")]
+public static extern IntPtr GetConsoleWindow();
+
+[DllImport("user32.dll")]
+public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);
+'
+
 
 $ScriptPath = Split-Path $MyInvocation.MyCommand.Path
 
@@ -40,6 +48,19 @@ $global:checklog = 0
 #Функции для проверки данных
 ###############################################################################
 
+$xMF_chk_hideshow.Add_Checked({$xMF_chk_hideshow.content = "Спрятать консоль"; Show-Console})
+$xMF_chk_hideshow.Add_UnChecked({$xMF_chk_hideshow.content = "Показать консоль"; Hide-Console})
+
+
+function Show-Console {
+$consolePtr = [Console.Window]::GetConsoleWindow()
+[Console.Window]::ShowWindow($consolePtr, 5)
+}
+
+function Hide-Console {
+$consolePtr = [Console.Window]::GetConsoleWindow()
+[Console.Window]::ShowWindow($consolePtr, 0)
+}
 
 Function delete_spaces_FIO($SetFIO)
 {
@@ -1286,7 +1307,7 @@ if (!($xMF_textbox_Group_newuser.Text -eq "") -and !($xMF_textbox_Group_existuse
                 getgroups
                 if (!($er -eq 0))
                 {
-                [System.Windows.Forms.MessageBox]::Show("Всего групп с ошибками : $er","Подтверждение","OK","information")
+                    [System.Windows.Forms.MessageBox]::Show("Всего групп с ошибками : $er","Подтверждение","OK","information")
                 }
             }
 
