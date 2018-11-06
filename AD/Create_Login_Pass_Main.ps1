@@ -1290,6 +1290,8 @@ if (!($xMF_textbox_Group_newuser.Text -eq "") -and !($xMF_textbox_Group_existuse
         $message = [System.Windows.Forms.MessageBox]::Show("Список имеет записи, он будет очищен для нового списка","Подтверждение","OKCANCEL","information")
         if ($message -eq "OK")
         {
+            $xMF_groups_lstv_user1.Items.Clear()
+            $xMF_groups_lstv_user2.Items.Clear()
             $gr = getgroups
             if ($gr -eq "ERROR")
             {
@@ -1300,17 +1302,6 @@ if (!($xMF_textbox_Group_newuser.Text -eq "") -and !($xMF_textbox_Group_existuse
             {
                 [System.Windows.Forms.MessageBox]::Show("У пользователя"+$xMF_textbox_Group_existuser.Text+"нет групп","Подтверждение","OK","information")
             }
-            else
-            {
-                $xMF_groups_lstv_user1.Items.Clear()
-                $xMF_groups_lstv_user2.Items.Clear()
-                getgroups
-                if (!($er -eq 0))
-                {
-                    [System.Windows.Forms.MessageBox]::Show("Всего групп с ошибками : $er","Подтверждение","OK","information")
-                }
-            }
-
             
         }
 
@@ -1321,14 +1312,6 @@ if (!($xMF_textbox_Group_newuser.Text -eq "") -and !($xMF_textbox_Group_existuse
         if ($gr -eq 0)
         {
             [System.Windows.Forms.MessageBox]::Show("У пользователя "+$xMF_textbox_Group_existuser.Text+" нет групп","Подтверждение","OK","information")
-        }
-        else
-        {
-            $gr
-            if (!($er -eq 0))
-            {
-            [System.Windows.Forms.MessageBox]::Show("Всего групп с ошибками : $er","Информация","OK","information")
-            }
         }
     }
 
