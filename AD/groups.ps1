@@ -8,7 +8,7 @@
     catch
     {
         [System.Windows.Forms.MessageBox]::Show($error[0].Exception.Message,"Ошибка","OK","Warning")
-        Write-Host -BackgroundColor Yellow "ERROR -> " $error[0].Exception.Message
+        Write-Host -ForegroundColor Black -BackgroundColor Yellow "ERROR -> " $error[0].Exception.Message
         return "ERROR"
     }
             if ($groups_load_user2.MemberOf[0] -eq $null)
