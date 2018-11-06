@@ -7,15 +7,25 @@ Function find_user([string]$SelectMail="",[int]$checkcount=0,[bool]$multi=$true)
 if ($multi -eq $true)
 {
     $displayname = $xMF_lstv_SingleUser.Items[$checkcount].displayname -replace "`n|`r",""
+    $logincheck = $xMF_lstv_SingleUser.Items[$checkcount].samaccountname -replace "`n|`r",""
 
 }
 else
 {
     $displayname = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].displayname -replace "`n|`r",""
+    $logincheck = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].samaccountname -replace "`n|`r",""
 }
 
 #Ищем пользователя в АД
+if ($logincheck -eq "")
+{
 $user = Get-ADUser -filter "Name -like '$displayname*'" -Properties CanonicalName,Name,SamAccountName,Initials,UserPrincipalName,DisplayName,GivenName,surName,OfficePhone,EmailAddress,department,Title,City,StreetAddress,PostalCode,Country,Company,office,description
+}
+else
+{
+$user = Get-ADUser $logincheck -Properties CanonicalName,Name,SamAccountName,Initials,UserPrincipalName,DisplayName,GivenName,surName,OfficePhone,EmailAddress,department,Title,City,StreetAddress,PostalCode,Country,Company,office,description
+}
+
 
 #Создаем инициалы
 $ini = $displayname.Split(" ")
@@ -158,7 +168,8 @@ $user2 = Get-ADUser -filter{samaccountname -eq $login} | select name,samaccountn
     }
 }
 #Если ФИО существует, выводим по нему данные в Listview_Exist
-else 
+
+else
     {
      
 
