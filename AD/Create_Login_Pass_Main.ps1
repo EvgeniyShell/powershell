@@ -779,7 +779,8 @@ if (!($xMF_lstv_SingleUser.SelectedIndex -eq -1))
     $item = $xmf_lstv_SingleUser.Items[$xmf_lstv_SingleUser.SelectedIndex].DisplayName
     $item2 = $xmf_lstv_SingleUser.Items[$xmf_lstv_SingleUser.SelectedIndex].SamAccountName
     $item3 = $xmf_lstv_SingleUser.Items[$xmf_lstv_SingleUser.SelectedIndex].Pass
-    [Windows.Clipboard]::SetText("$item	$item2	$item3")
+    [Windows.Clipboard]::Clear()
+    [Windows.Clipboard]::SetDataObject("$item	$item2	$item3")
     $xMF_label_prBar.Content = "Данные пользователя $item скопированы в буфер обмена"
     Write-Host "Данные пользователя $item скопированы в буфер обмена"
 }
@@ -791,7 +792,8 @@ if (!($xMF_lstv_SingleUser.SelectedIndex -eq -1))
     $item = $xmf_lstv_SingleUser.Items[$xmf_lstv_SingleUser.SelectedIndex].DisplayName
     $item2 = $xmf_lstv_SingleUser.Items[$xmf_lstv_SingleUser.SelectedIndex].SamAccountName
     $item3 = $xmf_lstv_SingleUser.Items[$xmf_lstv_SingleUser.SelectedIndex].Pass
-    [Windows.Clipboard]::SetText("$item	$item2	$item3")
+    [Windows.Clipboard]::Clear()
+    [Windows.Clipboard]::SetDataObject("$item	$item2	$item3")
     $xMF_label_prBar.Content = "Данные пользователя $item скопированы в буфер обмена"
     Write-Host "Данные пользователя $item скопированы в буфер обмена"
 }
@@ -805,7 +807,8 @@ if (!($xMF_lstv_SingleUser_Exist.SelectedIndex -eq -1))
     $item3 = $xMF_lstv_SingleUser_Exist.Items[$xMF_lstv_SingleUser_Exist.SelectedIndex].jobtitle
     $item4 = $xMF_lstv_SingleUser_Exist.Items[$xMF_lstv_SingleUser_Exist.SelectedIndex].Department
     $item5 = $xMF_lstv_SingleUser_Exist.Items[$xMF_lstv_SingleUser_Exist.SelectedIndex].Company
-    [Windows.Clipboard]::SetText("$item	$item3	$item4	$item5	$item2")
+    [Windows.Clipboard]::Clear()
+    [Windows.Clipboard]::SetDataObject("$item	$item3	$item4	$item5	$item2")
     $xMF_label_prBar.Content = "Данные существующего пользователя $item скопированы в буфер обмена"
     Write-Host "Данные существующего пользователя $item скопированы в буфер обмена"
 }
@@ -819,7 +822,8 @@ if (!($xMF_lstv_SingleUser_Exist.SelectedIndex -eq -1))
     $item3 = $xMF_lstv_SingleUser_Exist.Items[$xMF_lstv_SingleUser_Exist.SelectedIndex].jobtitle
     $item4 = $xMF_lstv_SingleUser_Exist.Items[$xMF_lstv_SingleUser_Exist.SelectedIndex].Department
     $item5 = $xMF_lstv_SingleUser_Exist.Items[$xMF_lstv_SingleUser_Exist.SelectedIndex].Company
-    [Windows.Clipboard]::SetText("$item	$item3	$item4	$item5	$item2")
+    [Windows.Clipboard]::Clear()
+    [Windows.Clipboard]::SetDataObject("$item	$item3	$item4	$item5	$item2")
     $xMF_label_prBar.Content = "Данные существующего пользователя $item скопированы в буфер обмена"
     Write-Host "Данные существующего пользователя $item скопированы в буфер обмена"
 }
@@ -1311,7 +1315,7 @@ if (!($xMF_textbox_Group_newuser.Text -eq "") -and !($xMF_textbox_Group_existuse
         $gr = getgroups
         if ($gr -eq 0)
         {
-            [System.Windows.Forms.MessageBox]::Show("У пользователя "+$xMF_textbox_Group_existuser.Text+" нет групп","Подтверждение","OK","information")
+            [System.Windows.Forms.MessageBox]::Show("У пользователя"+$xMF_textbox_Group_existuser.Text+"нет групп","Подтверждение","OK","information")
         }
     }
 

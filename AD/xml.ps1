@@ -56,7 +56,22 @@
                                 <GridViewColumn Header="mail" DisplayMemberBinding="{Binding mail}"/>
                                 <GridViewColumn Header="ini" DisplayMemberBinding="{Binding ini}"/>
                                 <GridViewColumn Header="adcheck" DisplayMemberBinding="{Binding adcheck}"/>
-                                <GridViewColumn Header="obshie" DisplayMemberBinding="{Binding obshie}"/>
+                                <GridViewColumn Header="obshie" DisplayMemberBinding="{Binding obshie}">
+
+<GridViewColumn.CellTemplate>
+        <DataTemplate>
+            <TextBlock x:Name="Txt" Text="{Binding obshie}" />
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding obshie}" Value="no">
+                    <Setter TargetName="Txt" Property="Foreground" Value="Red" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </GridViewColumn.CellTemplate>
+</GridViewColumn>
+
+
+
                             </GridView>
                         </ListView.View>
                     </ListView>
