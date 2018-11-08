@@ -1,11 +1,13 @@
-﻿$ids = 4740
+﻿function event-read2 ($ids = 4740, $newest = 2)
+{ #start
 #$ids = 4740,4726,4720
 #$ids = 4726
-$newest = 3
+
 
 [int64]$time = [int64](New-TimeSpan (Get-Date).AddHours(-3)).TotalMilliseconds
 $Addomain = Get-ADDomainController -Filter {IsReadOnly -eq $false} | select HostName
 $out = @()
+$second = 'Computer'
 
 foreach ($id in $ids)
 {
@@ -30,12 +32,24 @@ Get-Job -Name EVENT | Remove-Job
 
 foreach ($event in $events)
 {
+
+        if (!($ids.Count -gt 1))
+        {
+            switch($Event.EventID)
+            {
+            4781 {$second = 'New name'}
+            Default {$second = 'Computer'}
+            }
+        }
+
         switch($Event.EventID)
         {
-            "4740" {$action = "УЗ Заблокирована";$comp = $Event.ReplacementStrings[1];$whdel = ""}
-            "4720" {$action = "УЗ создана"; $comp = ""; $whdel = $Event.ReplacementStrings[4]}
-            "4726" {$action = "УЗ удалена"; $comp = ""; $whdel = $Event.ReplacementStrings[4]}
-            "Default" {$action = "Unknown"; $comp = ""; $whdel = ""}
+            4740 {$action = "УЗ Заблокирована";$comp = $Event.ReplacementStrings[1];$whdel = ""}
+            4720 {$action = "УЗ создана"; $comp = ""; $whdel = $Event.ReplacementStrings[4]}
+            4726 {$action = "УЗ удалена"; $comp = ""; $whdel = $Event.ReplacementStrings[4]}
+            4767 {$action = "УЗ разблокирована"; $comp = ""; $whdel = $Event.ReplacementStrings[4]}
+            4781 {$action = "Изменено имя"; $comp = $Event.ReplacementStrings[1]; $whdel = $Event.ReplacementStrings[5]}
+            Default {$action = "Unknown"; $comp = $Event.ReplacementStrings[1]; $whdel = $Event.ReplacementStrings[4]}
         }
 
         [array]$out += [PSCustomObject]@{
@@ -44,9 +58,13 @@ foreach ($event in $events)
         'Time' = $Event.TimeGenerated
         'ID' = [string]$Event.EventID
         'Accountname' = $Event.ReplacementStrings[0]
-        'Computername' = $comp
+        $second = $comp
         'Who change/Delete' = $whdel
 
         }
 }
 }
+
+$out
+
+} #end
