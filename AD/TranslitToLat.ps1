@@ -69,6 +69,7 @@ $Translit_To_LAT = @{
 [char]'Ю' = "Yu"
 [char]'я' = "ya"
 [char]'Я' = "Ya"
+
 }
  
 $outChars=""

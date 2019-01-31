@@ -1459,7 +1459,7 @@ if ($xMF_group_radio_one.IsChecked)
             $usertemp = $xMF_textbox_Group_newuser.Text
             for ($i=0 ; $i -ne $xMF_groups_lstv_user2.Items.Count ; $i++)
             {
-                $grouptemp = $xMF_groups_lstv_user2.Items[$i] 
+                $grouptemp = $xMF_groups_lstv_user2.Items[$i]
                 try
                 {
                     Add-ADGroupMember -Identity $grouptemp -Members $usertemp

@@ -1,4 +1,4 @@
-﻿function event-read2 ($ids = 4740, $newest = 2)
+﻿function event-read2 ($ids = 4740, $newest = 10)
 { #start
 #$ids = 4740,4726,4720
 #$ids = 4726
