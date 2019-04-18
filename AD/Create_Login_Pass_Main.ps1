@@ -30,7 +30,7 @@ $ScriptPath = Split-Path $MyInvocation.MyCommand.Path
 . $ScriptPath\add_user_ad
 # XAML
 . $ScriptPath\xml.ps1
-#Функции для работы с группами
+# Функции для работы с группами
 . $ScriptPath\groups.ps1
 
 #. $ScriptPath\find_user_single.ps1
@@ -921,7 +921,7 @@ if (!($xmf_lstv_SingleUser.Items.Count -eq 0))
 {
 
     $message = [System.Windows.Forms.MessageBox]::Show("Выгрузить данные в консоль?","Уведомление","OKCANCEL","Information")
-    if ($message = "OK")
+    if ($message -eq "OK")
     {
         Write-Host -BackgroundColor Yellow -ForegroundColor Black "---------------------------------START---------------------------------"
         for ($i=0 ; $i -ne $xmf_lstv_SingleUser.Items.Count ; $i++)
@@ -941,6 +941,166 @@ if (!($xmf_lstv_SingleUser.Items.Count -eq 0))
 })
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+####################################################################
+#Кнопка btn_blockall - Заблокировать всех в нижнем списке
+####################################################################
+
+$xMF_btn_blockall.add_click({
+
+if (!($xMF_lstv_SingleUser_Exist.Items.Count -eq 0))
+{
+    $message = [System.Windows.Forms.MessageBox]::Show("Пользователи будут заблокированы","Уведомление","OKCANCEL","Information")
+    if ($message = "OK")
+    {
+    $xMF_prBar.Value = 0
+    $SCount = 0
+    $xMF_prBar.Maximum = $xMF_lstv_SingleUser.Items.Count - 1
+    for ($i=0 ; $i -ne $xMF_lstv_SingleUser_Exist.Items.Count ; $i++)
+    {
+        if ($xMF_lstv_SingleUser_Exist.Items[$i].Enabled -eq "True")
+        {
+            $login = $xMF_lstv_SingleUser_Exist.Items[$i].SamAccountName
+            try
+            {
+                Disable-ADAccount -Identity $login
+                Set-ADUser $login -Description $xMF_txtbox_mail_single.Text
+                write-host [ОТКЛ] -> Пользователь $login отключен, в поле Description добавлено ($xMF_txtbox_mail_single.Text)
+            }
+            catch
+            {
+                write-host -BackgroundColor Red -ForegroundColor white [ОТКЛ] -> Ошибка в отключении пользователя $login ($error[0].Exception.Message)
+            }
+        } # ---End IF ($xMF_lstv_SingleUser_Exist.Items[$i].Enabled -eq "True")
+        elseif ($xMF_lstv_SingleUser_Exist.Items[$i].Enabled -eq "False")
+        {
+            write-host -BackgroundColor Red -ForegroundColor white [ОТКЛ] -> Пользователь $login не был отключен, он и так заблокирован. Описание - ($xMF_lstv_SingleUser_Exist.Items[$i].Description)
+        } # ---End ELSEIF ($xMF_lstv_SingleUser_Exist.Items[$i].Enabled -eq "False")
+        $SCount = $SCount + 1
+        $xMF_prBar.Value = $SCount
+
+    } # ---end FOR ($i=0 ; $i -ne $xMF_lstv_SingleUser_Exist.Items.Count ; $i++)
+    } # ---end if ($message = "OK")
+} # ---END (!($xMF_lstv_SingleUser_Exist.Items.Count -eq 0))
+
+
+})
+
+#---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+####################################################################
+#Кнопка btn_changeall - Изменить данные у всех
+####################################################################
+
+$xMF_btn_changeall.add_click({
+
+if (!$xMF_lstv_SingleUser.Items.Count -eq 0)
+{
+$message1 = [System.Windows.Forms.MessageBox]::Show("Изменить у всех пользователей?","Уведомление","OKCANCEL","Information")
+if ($message1 -eq "OK")
+{
+$xMF_prBar.Value = 0
+$SCount = 0
+$xMF_prBar.Maximum = $xMF_lstv_SingleUser.Items.Count - 1
+for ($i=0 ; $i -ne $xMF_lstv_SingleUser.Items.Count ; $i++)
+{
+
+if ($xMF_lstv_SingleUser.Items[$i].adcheck -eq "EXIST")
+{
+    $message = [System.Windows.Forms.MessageBox]::Show("Данные у пользователя`n"+$xMF_lstv_SingleUser.Items[$i].DisplayName+"`nбудут изменены, продолжить?","Уведомление","OKCANCEL","Information")
+
+    if ($message -eq "OK")
+    {
+        #http://www.computerperformance.co.uk/Logon/LDAP_attributes_active_directory.htm
+        $login = $xMF_lstv_SingleUser.Items[$i].samaccountname
+        $UserADinfo = Get-ADUser $login -Properties Description | select Enabled,Description
+
+        $hash = @{}
+        if(!($xMF_lstv_SingleUser.Items[$i].Office -eq "")){$hash.physicalDeliveryOfficeName = $xMF_lstv_SingleUser.Items[$i].office;}elseif($xmf_chk_office.isChecked -eq $true){Set-ADUser $login -Office $null}
+        if(!($xMF_lstv_SingleUser.Items[$i].OfficePhone -eq "")){$hash.telephoneNumber = $xMF_lstv_SingleUser.Items[$i].officephone;}elseif($xMF_chk_OfficePhone.isChecked -eq $true){Set-ADUser $login -OfficePhone $null}
+        if(!($xMF_lstv_SingleUser.Items[$i].jobtitle -eq "")){$hash.title = $xMF_lstv_SingleUser.Items[$i].jobtitle;}elseif($xMF_chk_jobtitle.isChecked -eq $true){Set-ADUser $login -Title $null}
+        if(!($xMF_lstv_SingleUser.Items[$i].Department -eq "")){$hash.department = $xMF_lstv_SingleUser.Items[$i].department;}elseif($xMF_chk_department.isChecked -eq $true){Set-ADUser $login -Department $null}
+        if(!($xMF_lstv_SingleUser.Items[$i].Company -eq "")){$hash.company = $xMF_lstv_SingleUser.Items[$i].company;}elseif($xMF_chk_company.isChecked -eq $true){Set-ADUser $login -Company $null}
+        if(!($xMF_lstv_SingleUser.Items[$i].StreetAddress -eq "")){$hash.streetAddress = $xMF_lstv_SingleUser.Items[$i].streetaddress;}elseif($xMF_chk_streetaddress.isChecked -eq $true){Set-ADUser $login -StreetAddress $null}
+        if(!($xMF_lstv_SingleUser.Items[$i].City -eq "")){$hash.l = $xMF_lstv_SingleUser.Items[$i].city;}elseif($xMF_chk_city.isChecked -eq $true){Set-ADUser $login -City $null}
+        if(!($xMF_lstv_SingleUser.Items[$i].PostalCode -eq "")){$hash.postalCode = $xMF_lstv_SingleUser.Items[$i].postalcode;}elseif($xMF_chk_postalcode.isChecked -eq $true){Set-ADUser $login -PostalCode $null}
+        if(!($xMF_lstv_SingleUser.Items[$i].mail -eq "")){$hash.mail = $xMF_lstv_SingleUser.Items[$i].mail;}
+        if(!($xMF_lstv_SingleUser.Items[$i].ini -eq "")){$hash.initials = $xMF_lstv_SingleUser.Items[$i].ini;}
+
+        
+        if ($UserADinfo.Enabled -eq $False)
+        {
+            try
+            {
+                Enable-ADAccount -Identity $login
+                write-host "Учетная запись пользователя" $login "включена"
+            }
+            catch
+            {
+                write-host -BackgroundColor Red -ForegroundColor Yellow "Учетную запись пользователя" $login "включить нельзя" -> $error[0].Exception.Message
+            }
+        }
+
+        if (!($UserADinfo.Description -eq $null))
+        {
+            try
+            {
+                Set-ADUser $login -Description $null
+                write-host "Учетной записи пользователя" $login "поле Description очищено"
+            }
+            catch
+            {
+                write-host -BackgroundColor Red -ForegroundColor Yellow "Учетной записи пользователя" $login "поле Description очистить нельзя" -> $error[0].Exception.Message
+            }
+        }
+
+        try
+        {
+            Set-ADUser $login -Replace $hash -Description $null
+            write-host Новые данные пользователю "-" $xMF_lstv_SingleUser.Items[$i].DisplayName "("$xMF_lstv_SingleUser.Items[$i].samaccountname")" внесены
+            $xMF_label_prBar.Content = "Новые данные пользователю - "+$xMF_lstv_SingleUser.Items[$i].DisplayName+"("+$xMF_lstv_SingleUser.Items[$i].samaccountname+") внесены"
+        }
+        catch
+        {
+            write-host -BackgroundColor Red -ForegroundColor white [УЗ] Ошибка внесения новых данных пользователю $xMF_lstv_SingleUser.Items[$i].DisplayName "("$xMF_lstv_SingleUser.Items[$i].samaccountname")": $error[0].Exception.Message
+            $xMF_label_prBar.Content = "Новые данные пользователю не внесены - "+$xMF_lstv_SingleUser.Items[$i].DisplayName+"("+$xMF_lstv_SingleUser.Items[$i].samaccountname+")"
+        }
+
+        if (!($xMF_lstv_SingleUser.Items[$i].pass -eq ""))
+        {
+            $pass = $xMF_lstv_SingleUser.Items[$i].pass
+            try
+            {
+                Set-ADAccountPassword $xMF_lstv_SingleUser.Items[$i].samaccountname -Reset -NewPassword (ConvertTo-SecureString $pass -AsPlainText -force)
+                write-host Пароль пользователю "-" $xMF_lstv_SingleUser.Items[$i].DisplayName "("$xMF_lstv_SingleUser.Items[$i].samaccountname")" сброшен на "("$xMF_lstv_SingleUser.Items[$i].pass")"
+            }
+            catch
+            {
+                write-host -BackgroundColor Red -ForegroundColor white [УЗ] Ошибка назначения пароля пользователю $xMF_lstv_SingleUser.Items[$i].DisplayName "("$xMF_lstv_SingleUser.Items[$i].samaccountname")": $error[0].Exception.Message
+            }
+        }
+    } # ---END if ($message -eq "OK")
+} # ---END if ($xMF_lstv_SingleUser.Items[$i].adcheck -eq "EXIST")
+else
+{
+write-host -ForegroundColor White -BackgroundColor Red У пользователя $login = $xMF_lstv_SingleUser.Items[$i].samaccountname должен быть статус EXIST
+}
+    $SCount = $SCount + 1
+    $xMF_prBar.Value = $SCount
+} # ---END for ($i=0 ; $i -ne $xMF_lstv_SingleUser.Items.Count ; $i++)
+} # ---END ($message1 -eq "OK")
+} # ---END ($xMF_lstv_SingleUser.Items.Count -eq 0)
+else
+{
+    [System.Windows.Forms.MessageBox]::Show("Список пустой","Уведомление","OK","Information")
+}
+
+})
+
+#---------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 
 
@@ -971,6 +1131,7 @@ else
 })
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 $xMF_lstvExist_Menu_Disable.add_click({
 

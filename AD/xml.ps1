@@ -69,9 +69,6 @@
         </DataTemplate>
     </GridViewColumn.CellTemplate>
 </GridViewColumn>
-
-
-
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -197,6 +194,8 @@
                 <MenuItem x:Name="btn_GenPasswords" Header="Генерировать всем новые пароли"/>
                 <MenuItem x:Name="btn_allobshie" Header="Пометить все записи как ОБЩИЕ УЗ"/>
                 <MenuItem x:Name="btn_exporttoconsole" Header="Выгрузить в Console список"/>
+                <MenuItem x:Name="btn_blockall" Header="Заблокировать всех в нижнем списке"/>
+                <MenuItem x:Name="btn_changeall" Header="Изменить данные у всех"/>
             </MenuItem>
             <MenuItem Header="Настройки">
                 <MenuItem Header="Изменение данных">
