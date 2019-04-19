@@ -46,6 +46,7 @@ foreach ($event in $events)
         {
             4740 {$action = "УЗ Заблокирована";$comp = $Event.ReplacementStrings[1];$whdel = ""}
             4720 {$action = "УЗ создана"; $comp = ""; $whdel = $Event.ReplacementStrings[4]}
+            4741 {$action = "УЗ компьютера создана"; $comp = ""; $whdel = $Event.ReplacementStrings[4]}
             4726 {$action = "УЗ удалена"; $comp = ""; $whdel = $Event.ReplacementStrings[4]}
             4767 {$action = "УЗ разблокирована"; $comp = ""; $whdel = $Event.ReplacementStrings[4]}
             4781 {$action = "Изменено имя"; $comp = $Event.ReplacementStrings[1]; $whdel = $Event.ReplacementStrings[5]}

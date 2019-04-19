@@ -956,7 +956,7 @@ if (!($xMF_lstv_SingleUser_Exist.Items.Count -eq 0))
     {
     $xMF_prBar.Value = 0
     $SCount = 0
-    $xMF_prBar.Maximum = $xMF_lstv_SingleUser.Items.Count - 1
+    $xMF_prBar.Maximum = $xMF_lstv_SingleUser.Items.Count
     for ($i=0 ; $i -ne $xMF_lstv_SingleUser_Exist.Items.Count ; $i++)
     {
         if ($xMF_lstv_SingleUser_Exist.Items[$i].Enabled -eq "True")
@@ -1003,7 +1003,7 @@ if ($message1 -eq "OK")
 {
 $xMF_prBar.Value = 0
 $SCount = 0
-$xMF_prBar.Maximum = $xMF_lstv_SingleUser.Items.Count - 1
+$xMF_prBar.Maximum = $xMF_lstv_SingleUser.Items.Count
 for ($i=0 ; $i -ne $xMF_lstv_SingleUser.Items.Count ; $i++)
 {
 
