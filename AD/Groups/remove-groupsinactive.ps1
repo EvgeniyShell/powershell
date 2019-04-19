@@ -54,7 +54,7 @@ foreach ($user in $users)
                     }
                     else
                     { 
-                        Remove-ADGroupMember -Identity $user.memberOf[$i] -Members $user.SamAccountName -Confirm:$false -WhatIf
+                        Remove-ADGroupMember -Identity $user.memberOf[$i] -Members $user.SamAccountName -Confirm:$false
                         write-host -BackgroundColor Yellow -ForegroundColor Black $user.memberOf[$i] -> $user.SamAccountName -> удален
                     }
                 } # ($clearALL -eq $true)
