@@ -35,7 +35,6 @@ $ScriptPath = Split-Path $MyInvocation.MyCommand.Path
 
 #. $ScriptPath\find_user_single.ps1
 #. $ScriptPath\MakeCopy.ps1
-
 $xMF_btn_group_OU.Visibility = "Hidden"
 $xMF_lstv_SingleUser.Items.Clear()
 $Global:OU = "OU=Test,OU=OU_OTHER,DC=ASO,DC=RT,DC=LOCAL"
@@ -43,15 +42,13 @@ $xMF_txtbox_OU_path.Text = $Global:OU
 $xMF_textbox_Group_newuser.Text=""
 $xMF_textbox_Group_existuser.Text=""
 $global:checklog = 0
-
+$global:firstrun = 1
 ###############################################################################
 #Функции для проверки данных
 ###############################################################################
 
 $xMF_chk_hideshow.Add_Checked({$xMF_chk_hideshow.content = "Спрятать консоль"; Show-Console})
 $xMF_chk_hideshow.Add_UnChecked({$xMF_chk_hideshow.content = "Показать консоль"; Hide-Console})
-
-
 function Show-Console {
 $consolePtr = [Console.Window]::GetConsoleWindow()
 [Console.Window]::ShowWindow($consolePtr, 5)
@@ -258,7 +255,6 @@ if ($xMF_lstv_SingleUser.SelectedIndex -eq -1)
 }
 else
 {
-   
     $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].firstname = $xMF2_textbox_firstname.Text
     $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].lastname = $xMF2_textbox_lastname.Text
     $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].Displayname = $xMF2_textbox_Displayname.Text
@@ -509,6 +505,7 @@ else
 {
     [System.Windows.Forms.MessageBox]::Show("Буфер обмена не содержит текст","Уведомление","OK","Warning")
 }
+
 
 })
 
@@ -764,6 +761,29 @@ if (!($xMF_lstv_SingleUser_Exist.SelectedIndex -eq -1)){
     $xMF_lstv_SingleUser_Exist.Items.Remove($xMF_lstv_SingleUser_Exist.SelectedItem)}
 else{
     [System.Windows.Forms.MessageBox]::Show("Выделите строку с данными","Уведомление","OK","Warning")}
+})
+
+
+
+$xMF_lstvExist_Menu_deletegroup.add_click({
+
+    if (!($xMF_lstv_SingleUser_Exist.SelectedIndex -eq -1))
+    {
+        $userdelete = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].samaccountname
+        chkboxdeletegroups -user $userdelete -exception "mdaemon"
+    }
+
+})
+
+
+$xMF_lstvExist_Menu_deletemanager.add_click({
+
+    if (!($xMF_lstv_SingleUser_Exist.SelectedIndex -eq -1))
+    {
+        $userdelete = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].samaccountname
+        managers -user $userdelete -empty $true
+    }
+
 })
 
 
@@ -1176,11 +1196,8 @@ $message = [System.Windows.Forms.MessageBox]::Show("Пользователи с�
                 $User = Get-ADUser -Identity $xMF_lstv_SingleUser.Items[$i].samaccountname
                 $UserDN = $User.distinguishedName
                 $TargetOU = $xMF_txtbox_OU_path.Text
+                $complete = $false
 
-                    if ($user.Enabled -eq $False)
-                    {
-                        Enable-ADAccount -Identity $UserDN
-                    }
                 try
                 {
                     
@@ -1188,14 +1205,34 @@ $message = [System.Windows.Forms.MessageBox]::Show("Пользователи с�
                     write-host Пользователь $xMF_lstv_SingleUser.Items[$i].displayname успешно перенесен в $TargetOU
                     $xMF_label_prBar.Content = "Пользователь "+$xMF_lstv_SingleUser.Items[$i].displayname+" успешно перенесен в $TargetOU"
                     $t+=1
+                    $complete = $true
                 }
                 catch
                 {
                     $nt+=1
                     write-host Ошибка, перенести пользователя $xMF_lstv_SingleUser.Items[$i].displayname не удалось.
                     $xMF_label_prBar.Content = "Ошибка, перенести пользователя "+$xMF_lstv_SingleUser.Items[$i].displayname+" не удалось."
+                    $complete = $false
                 }
 
+
+                    if (($user.Enabled -eq $False) -and ($complete -eq $true))
+                    {
+                        Enable-ADAccount -Identity $UserDN
+                        write-host УЗ -> $xMF_lstv_SingleUser.Items[$i].displayname включена
+                    }
+
+                    if (($xMF_chk_deletgroupsmove.IsChecked -eq $True) -and ($complete -eq $true))
+                    {
+                        chkboxdeletegroups -user $User -exception "mdaemon"
+                    }
+
+                    if (($xMF_chk_deletmanagermove.IsChecked -eq $True) -and ($complete -eq $true))
+                    {
+                        managers -user $User -empty $true -short $true
+                    }
+
+                    $complete = $false
 
             }
             else
@@ -1220,28 +1257,42 @@ $xMF_lstv_menu_moveOU.add_click({
         $User = Get-ADUser -Identity $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].samaccountname
         $UserDN = $User.distinguishedName
         $TargetOU = $xMF_txtbox_OU_path.Text
+        $complete = $false
 
         $message = [System.Windows.Forms.MessageBox]::Show("Перенести "+$xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].displayname+" в:`n"+$xMF_txtbox_OU_path.Text+" ?","Подтверждение","OKCANCEL","information")
 
         if ($message -eq "OK")
         {
-                if ($user.Enabled -eq $False)
-                {
-                    Enable-ADAccount -Identity $UserDN
-                }
+              
             try
             {
                 
                 Move-ADObject -Identity $UserDN -TargetPath $TargetOU
                 write-host Пользователь $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].displayname успешно перенесен в $TargetOU
                 $xMF_label_prBar.Content = "Пользователь "+$xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].displayname+" успешно перенесен в $TargetOU"
+                $complete = $True
             }
             catch
             {
                 [System.Windows.Forms.MessageBox]::Show("Ошибка, перенести пользователя не удалось.","Уведомление","OK","Warning")
                 write-host Ошибка, перенести пользователя $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].displayname не удалось.
                 $xMF_label_prBar.Content = "Ошибка, перенести пользователя "+$xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].displayname+" не удалось."
+                $complete = $false
             }
+
+            if (($user.Enabled -eq $False) -and ($complete -eq $true))
+            {
+                Enable-ADAccount -Identity $UserDN
+                write-host УЗ -> Пользователя $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].displayname включена
+            }
+
+            if (($xMF_chk_deletgroupsmove.IsChecked -eq $True) -and ($complete -eq $true))
+            {
+                chkboxdeletegroups -user $User -exception "mdaemon"
+            }
+
+
+            $complete = $false
         }
    }
 
@@ -1339,9 +1390,19 @@ textcheckad
 
 $xMF_OU.add_click({
 
-$xMF_txtbox_OU_path.Text = Get-OUDialog-start
-
+Get-OUDialog-start
+$windowSelectOU.Show()
+$windowSelectOU.Activate()
 })
+
+$windowSelectOU.add_MouseLeftButtonDown({
+        try
+        {
+            $this.dragmove()
+        }catch
+        {
+        }
+ })
 
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1678,6 +1739,7 @@ $xMF_group_btn_left.IsEnabled = $false
 
 $xMF_btn_group_OU.add_click({
 $xMF_textbox_Group_existuser.Text = Get-OUDialog-start
+
 })
 
 
@@ -1697,6 +1759,8 @@ if (!($global:domstruct -eq $null))
     if ($clearOU -eq "OK")
     {
         $global:domstruct = $null
+        $treeviewOUs.Items.Clear()
+        
     }
 }
 
@@ -1750,13 +1814,14 @@ $xMF_Btn_Exit.add_click({
 
 })
 
+
 $Form_Main.ShowDialog() | out-null
 
-Select-Xml $xaml -xpath "//*[@*[contains(translate(name(.),'n','N'),'Name')]]" | Foreach {$_.Node} | Foreach {Remove-Variable -Name "xMF_$($_.Name)"}
-Select-Xml $xaml2 -xpath "//*[@*[contains(translate(name(.),'n','N'),'Name')]]" | Foreach {$_.Node} | Foreach {Remove-Variable -Name "xMF2_$($_.Name)"}
-Remove-Variable -Name xaml
-Remove-Variable -Name xaml2
-Remove-Variable -Name XReader
-Remove-Variable -Name XReader2
-Remove-Variable -Name Form_Main
-Remove-Variable -Name Form_2
+#Select-Xml $xaml -xpath "//*[@*[contains(translate(name(.),'n','N'),'Name')]]" | Foreach {$_.Node} | Foreach {Remove-Variable -Name "xMF_$($_.Name)"}
+#Select-Xml $xaml2 -xpath "//*[@*[contains(translate(name(.),'n','N'),'Name')]]" | Foreach {$_.Node} | Foreach {Remove-Variable -Name "xMF2_$($_.Name)"}
+#Remove-Variable -Name xaml
+#Remove-Variable -Name xaml2
+#Remove-Variable -Name XReader
+#Remove-Variable -Name XReader2
+#Remove-Variable -Name Form_Main
+#Remove-Variable -Name Form_2

@@ -82,11 +82,14 @@
                                 <MenuItem x:Name="lstvExist_Menu_copy2bufer" Header="Копировать в буфер"/>
                                 <MenuItem x:Name="lstvExist_Menu_Disable" Header="Отключить пользователя"/>
                                 <MenuItem x:Name="lstvExist_Menu_Clear" Header="Очистить"/>
+                                <MenuItem x:Name="lstvExist_Menu_deletemanager" Header="Удалить менеджера у пользователя"/>
+                                <MenuItem x:Name="lstvExist_Menu_deletegroup" Header="Удалить группы у пользователя"/>
                                 <MenuItem x:Name="lstvExist_Menu_delete" Header="Удалить"/>
                             </ContextMenu>
                         </ListView.ContextMenu>
                         <ListView.View>
                             <GridView>
+
                                 <GridViewColumn Header="firstname" DisplayMemberBinding="{Binding firstname}"/>
                                 <GridViewColumn Header="lastname" DisplayMemberBinding="{Binding lastname}"/>
                                 <GridViewColumn Header="displayname" DisplayMemberBinding="{Binding displayname}"/>
@@ -193,9 +196,9 @@
             <MenuItem Header="Обработка">
                 <MenuItem x:Name="btn_GenPasswords" Header="Генерировать всем новые пароли"/>
                 <MenuItem x:Name="btn_allobshie" Header="Пометить все записи как ОБЩИЕ УЗ"/>
-                <MenuItem x:Name="btn_exporttoconsole" Header="Выгрузить в Console список"/>
                 <MenuItem x:Name="btn_blockall" Header="Заблокировать всех в нижнем списке"/>
                 <MenuItem x:Name="btn_changeall" Header="Изменить данные у всех"/>
+                <MenuItem x:Name="btn_exporttoconsole" Header="Выгрузить в Console список" Background="#FF8ABF39"/>
             </MenuItem>
             <MenuItem Header="Настройки">
                 <MenuItem Header="Изменение данных">
@@ -210,6 +213,8 @@
                     <CheckBox x:Name="chk_city" Content="city" IsChecked="True"/>
                     <CheckBox x:Name="chk_postalcode" Content="postalcode" IsChecked="True"/>
                 </MenuItem>
+                <CheckBox x:Name="chk_deletmanagermove" Content="Удалять менеджеров при переносе" IsChecked="False"/>
+                <CheckBox x:Name="chk_deletgroupsmove" Content="Удалять группы при переносе" IsChecked="False"/>
                 <CheckBox x:Name="chk_hideshow" Content="Спрятать консоль" IsChecked="True"/>
             </MenuItem>
         </Menu>
@@ -285,3 +290,34 @@ $XReader2=(New-Object System.Xml.XmlNodeReader $xaml2)
 $Form_2=[Windows.Markup.XamlReader]::Load( $XReader2 )
 $xaml2.SelectNodes("//*[@*[contains(translate(name(.),'n','N'),'Name')]]") | %{Set-Variable -Name "xMF2_$($_.Name)" -Value $Form_2.FindName($_.Name)}
 
+
+
+
+[xml]$xamlMain = @'
+<Window x:Name="windowSelectOU"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Select OU" Height="623.912" Width="600" WindowStyle="None">
+    <Grid>
+        <TreeView x:Name="treeviewOUs" Margin="10,10,10.4,61.8"/>
+        <Button x:Name="btnCancel" Content="Cancel" Margin="0,0,10.4,5.8" ToolTip="Filter" Height="23" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="71" IsCancel="True"/>
+        <Button x:Name="btnSelect" Content="Select" Margin="0,0,86.4,5.8" ToolTip="Filter" HorizontalAlignment="Right" Width="71" Height="23" VerticalAlignment="Bottom" IsDefault="True"/>
+        <TextBlock x:Name="txtSelectedOU" Margin="10,0,162.4,5.8" TextWrapping="Wrap" VerticalAlignment="Bottom" Height="23" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" IsEnabled="False"/>
+        <TextBlock x:Name="txtSelectedOU_2" Margin="10,0,10.4,33.8" TextWrapping="Wrap" VerticalAlignment="Bottom" Height="23" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" IsEnabled="False"/>
+    </Grid>
+</Window>
+'@
+
+
+$reader=(New-Object System.Xml.XmlNodeReader $xamlMain) 
+    $window=[Windows.Markup.XamlReader]::Load( $reader )
+
+    $namespace = @{ x = 'http://schemas.microsoft.com/winfx/2006/xaml' }
+    $xpath_formobjects = "//*[@*[contains(translate(name(.),'n','N'),'Name')]]" 
+
+    # Create a variable for every named xaml element
+    Select-Xml $xamlMain -Namespace $namespace -xpath $xpath_formobjects | Foreach {
+        $_.Node | Foreach {
+            Set-Variable -Name ($_.Name) -Value $window.FindName($_.Name)
+        }
+    }
