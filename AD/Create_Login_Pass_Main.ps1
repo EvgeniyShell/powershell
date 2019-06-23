@@ -9,7 +9,6 @@ public static extern IntPtr GetConsoleWindow();
 public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);
 '
 
-
 $ScriptPath = Split-Path $MyInvocation.MyCommand.Path
 
 #Import-Module RemoteAD
@@ -32,6 +31,8 @@ $ScriptPath = Split-Path $MyInvocation.MyCommand.Path
 . $ScriptPath\xml.ps1
 # Функции для работы с группами
 . $ScriptPath\groups.ps1
+# Функции для работы с inactive
+. $ScriptPath\inactive.ps1
 
 #. $ScriptPath\find_user_single.ps1
 #. $ScriptPath\MakeCopy.ps1
@@ -43,6 +44,10 @@ $xMF_textbox_Group_newuser.Text=""
 $xMF_textbox_Group_existuser.Text=""
 $global:checklog = 0
 $global:firstrun = 1
+$global:Session = ""
+
+testconnection
+
 ###############################################################################
 #Функции для проверки данных
 ###############################################################################
@@ -525,7 +530,19 @@ $xMF_lstv_Menu_Clear.add_click({
 
 $xMF_lstv_Menu_delete.add_click({
 if (!($xMF_lstv_SingleUser.SelectedIndex -eq -1)){
-    $xMF_lstv_SingleUser.Items.Remove($xMF_lstv_SingleUser.SelectedItem)}
+    
+    $count = $xMF_lstv_SingleUser.SelectedItems.Count
+
+    if ($count -gt 0)
+    {
+        #Пока количество выделеных записей больше нуля, удалять записи
+        while ($count -gt 0)
+        {
+            $xMF_lstv_SingleUser.Items.Remove($xMF_lstv_inactive.SelectedItem)
+            $count = $xMF_lstv_SingleUser.SelectedItems.Count
+        }
+    }
+}
 else{
     [System.Windows.Forms.MessageBox]::Show("Выделите строку с данными","Уведомление","OK","Information")}
 })
@@ -758,7 +775,20 @@ $xMF_lstvExist_Menu_Clear.add_click({
 
 $xMF_lstvExist_Menu_delete.add_click({
 if (!($xMF_lstv_SingleUser_Exist.SelectedIndex -eq -1)){
-    $xMF_lstv_SingleUser_Exist.Items.Remove($xMF_lstv_SingleUser_Exist.SelectedItem)}
+    
+    $count = $xMF_lstv_SingleUser_Exist.SelectedItems.Count
+
+    if ($count -gt 0)
+    {
+        #Пока количество выделеных записей больше нуля, удалять записи
+        while ($count -gt 0)
+        {
+            $xMF_lstv_SingleUser_Exist.Items.Remove($xMF_lstv_SingleUser_Exist.SelectedItem)
+            $count = $xMF_lstv_SingleUser_Exist.SelectedItems.Count
+        }
+    }
+     
+}
 else{
     [System.Windows.Forms.MessageBox]::Show("Выделите строку с данными","Уведомление","OK","Warning")}
 })
@@ -769,7 +799,7 @@ $xMF_lstvExist_Menu_deletegroup.add_click({
 
     if (!($xMF_lstv_SingleUser_Exist.SelectedIndex -eq -1))
     {
-        $userdelete = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].samaccountname
+        $userdelete = $xMF_lstv_SingleUser_Exist.Items[$xMF_lstv_SingleUser_Exist.SelectedIndex].samaccountname
         chkboxdeletegroups -user $userdelete -exception "mdaemon"
     }
 
@@ -780,7 +810,7 @@ $xMF_lstvExist_Menu_deletemanager.add_click({
 
     if (!($xMF_lstv_SingleUser_Exist.SelectedIndex -eq -1))
     {
-        $userdelete = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].samaccountname
+        $userdelete = $xMF_lstv_SingleUser_Exist.Items[$xMF_lstv_SingleUser_Exist.SelectedIndex].samaccountname
         managers -user $userdelete -empty $true
     }
 
@@ -1387,12 +1417,12 @@ textcheckad
 #Кнопка открытия OU
 ##############################################################
 
-
 $xMF_OU.add_click({
-
 Get-OUDialog-start
 $windowSelectOU.Show()
 $windowSelectOU.Activate()
+
+#$xMF_txtbox_OU_path.Text = Get-OUDialog-start
 })
 
 $windowSelectOU.add_MouseLeftButtonDown({
@@ -1738,8 +1768,9 @@ $xMF_group_btn_left.IsEnabled = $false
 })
 
 $xMF_btn_group_OU.add_click({
-$xMF_textbox_Group_existuser.Text = Get-OUDialog-start
-
+Get-OUDialog-start
+$windowSelectOU.Show()
+$windowSelectOU.Activate()
 })
 
 
@@ -1806,6 +1837,26 @@ if ($xmf_lstv_SingleUser.Items.Count -cge 1)
 
 })
 
+$xMF_Tab_Inactive.add_MouseLeftButtonup({
+
+    $xMF_menu_settings.IsEnabled = $false
+    $xMF_menu_obrab.IsEnabled = $false
+    
+})
+
+$xMF_Tab_singleUser.add_MouseLeftButtonup({
+
+    $xMF_menu_settings.IsEnabled = $True
+    $xMF_menu_obrab.IsEnabled = $True
+
+})
+
+$xMF_Tab_Groups.add_MouseLeftButtonup({
+
+    $xMF_menu_settings.IsEnabled = $false
+    $xMF_menu_obrab.IsEnabled = $false
+
+})
 
 $xMF_Btn_Exit.add_click({
 

@@ -16,7 +16,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Button Content="Button" HorizontalAlignment="Left" Height="100" Margin="0,0,0,-100" VerticalAlignment="Top" Width="0"/>
+                    <Button Content="Button" HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="0"/>
                     <Button x:Name="btn_clearsingle" Content="Очистить списки" HorizontalAlignment="Left" Margin="11.333,359.46,0,0" Width="232.5" Height="30.46" VerticalAlignment="Top"/>
                     <ListView x:Name="lstv_SingleUser" Margin="10,10,8.5,0" Height="295" VerticalAlignment="Top" AlternationCount="2">
                         <ListView.ContextMenu>
@@ -58,17 +58,17 @@
                                 <GridViewColumn Header="adcheck" DisplayMemberBinding="{Binding adcheck}"/>
                                 <GridViewColumn Header="obshie" DisplayMemberBinding="{Binding obshie}">
 
-<GridViewColumn.CellTemplate>
-        <DataTemplate>
-            <TextBlock x:Name="Txt" Text="{Binding obshie}" />
-            <DataTemplate.Triggers>
-                <DataTrigger Binding="{Binding obshie}" Value="no">
-                    <Setter TargetName="Txt" Property="Foreground" Value="Red" />
-                </DataTrigger>
-            </DataTemplate.Triggers>
-        </DataTemplate>
-    </GridViewColumn.CellTemplate>
-</GridViewColumn>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock x:Name="Txt" Text="{Binding obshie}" />
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding obshie}" Value="no">
+                                                    <Setter TargetName="Txt" Property="Foreground" Value="Red" />
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -110,27 +110,30 @@
                             </GridView>
                         </ListView.View>
                     </ListView>
-                    <TextBox x:Name="txtbox_mail_single" HorizontalAlignment="Left" Height="30" Margin="860.833,324,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="271" TextAlignment="Center" FontSize="16"/>
-                    <Button x:Name="btn_single_add_ad" Content="Добавить всех в АД" HorizontalAlignment="Left" Margin="248.833,359.46,0,0" Width="220" Height="30.46" VerticalAlignment="Top"/>
-                    <Button x:Name="Btn_single_CheckAD" Content="Проверить всех пользователей в АД" HorizontalAlignment="Left" Margin="248.833,324,0,0" VerticalAlignment="Top" Width="220" Height="30.46"/>
-                    <Label Content="Домен для почты:&#xA;[ОТКЛ]Description:" HorizontalAlignment="Left" Margin="750.373,317.08,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.523,0.28"/>
-                    <TextBlock x:Name="Statustext" HorizontalAlignment="Left" Margin="1150.5,359.46,0,0" TextWrapping="Wrap" Text="Статус в АД:" VerticalAlignment="Top" RenderTransformOrigin="0.24,0.438" Height="31" Width="271" FontSize="20"/>
-                    <Button x:Name="status_canc" Content="Сбросить статусы" Margin="1150.5,324,0,0" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left" Width="124.5"/>
-                    <Button x:Name="OU" Content="OU" HorizontalAlignment="Left" VerticalAlignment="Top" Width="37.703" Margin="818.13,359.46,0,0" Height="29.54"/>
-                    <TextBox x:Name="txtbox_OU_path" HorizontalAlignment="Left" Height="30" Margin="860.833,359,0,0" VerticalAlignment="Top" Width="271" MaxLines="2" IsUndoEnabled="False"/>
-                    <Label Content="Путь к OU:" HorizontalAlignment="Left" Margin="753.833,361.71,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="btn_change_OU" Content="Перенести всех пользователей в OU" HorizontalAlignment="Left" VerticalAlignment="Top" Width="213" Margin="473.833,324,0,0" Height="30"/>
-                    <Button x:Name="btn_genpass" Content="gen.pass" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70.998" Margin="473.833,359,0,0" Height="30.92"/>
-                    <TextBox x:Name="textbox_pass" HorizontalAlignment="Left" Height="28.21" TextWrapping="Wrap" VerticalAlignment="Top" Width="137.002" Margin="549.831,359.46,0,0" FontSize="16" TextAlignment="Center"/>
-                    <Button x:Name="btn_clearOU" Content="Сбросить" HorizontalAlignment="Left" VerticalAlignment="Top" Width="37.703" Margin="818.13,389,0,0" Height="15.5" FontSize="7"/>
-                    <RadioButton x:Name="pwd_old" Content="old" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="691.833,374.04,0,0" IsChecked="True"/>
-                    <RadioButton x:Name="pwd_new" Content="new" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="691.833,358.55,0,0"/>
+                    <TextBox x:Name="txtbox_mail_single" HorizontalAlignment="Left" Height="30" Margin="861.833,324,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="271" TextAlignment="Center" FontSize="16"/>
+                    <Button x:Name="btn_single_add_ad" Content="Добавить всех в АД" HorizontalAlignment="Left" Margin="249.833,359.46,0,0" Width="220" Height="30.46" VerticalAlignment="Top"/>
+                    <Button x:Name="Btn_single_CheckAD" Content="Проверить всех пользователей в АД" HorizontalAlignment="Left" Margin="249.833,324,0,0" VerticalAlignment="Top" Width="220" Height="30.46"/>
+                    <Label Content="Домен для почты:&#xA;[ОТКЛ]Description:" HorizontalAlignment="Left" Margin="751.373,317.08,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.523,0.28"/>
+                    <TextBlock x:Name="Statustext" HorizontalAlignment="Left" Margin="1151.5,359.46,0,0" TextWrapping="Wrap" Text="Статус в АД:" VerticalAlignment="Top" RenderTransformOrigin="0.24,0.438" Height="31" Width="271" FontSize="20"/>
+                    <Button x:Name="status_canc" Content="Сбросить статусы" Margin="1151.5,324,0,0" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left" Width="124.5"/>
+                    <Button x:Name="OU" Content="OU" HorizontalAlignment="Left" VerticalAlignment="Top" Width="37.703" Margin="819.13,359.46,0,0" Height="29.54"/>
+                    <TextBox x:Name="txtbox_OU_path" HorizontalAlignment="Left" Height="30" Margin="861.833,359,0,0" VerticalAlignment="Top" Width="271" MaxLines="2" IsUndoEnabled="False"/>
+                    <Label Content="Путь к OU:" HorizontalAlignment="Left" Margin="754.833,361.71,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="btn_change_OU" Content="Перенести всех пользователей в OU" HorizontalAlignment="Left" VerticalAlignment="Top" Width="213" Margin="474.833,324,0,0" Height="30"/>
+                    <Button x:Name="btn_genpass" Content="gen.pass" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70.998" Margin="474.833,359,0,0" Height="30.92"/>
+                    <TextBox x:Name="textbox_pass" HorizontalAlignment="Left" Height="28.21" TextWrapping="Wrap" VerticalAlignment="Top" Width="137.002" Margin="550.831,359.46,0,0" FontSize="16" TextAlignment="Center"/>
+                    <Button x:Name="btn_clearOU" Content="Сбросить" HorizontalAlignment="Left" VerticalAlignment="Top" Width="37.703" Margin="819.13,389,0,0" Height="15.5" FontSize="7"/>
+                    <RadioButton x:Name="pwd_old" Content="old" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="692.833,374.04,0,0" IsChecked="True"/>
+                    <RadioButton x:Name="pwd_new" Content="new" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="692.833,358.55,0,0"/>
 
 
                 </Grid>
             </TabItem>
             <TabItem x:Name="Tab_Groups" Header="Группы">
                 <Grid Margin="0,0,-6.5,-1.263">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
                     <ListView x:Name="groups_lstv_user1" Margin="25.5,168,0,0" HorizontalAlignment="Left" Width="253.5" Height="383" VerticalAlignment="Top">
                         <ListView.ContextMenu>
                             <ContextMenu>
@@ -147,7 +150,7 @@
                             </GridView>
                         </ListView.View>
                     </ListView>
-                    <ListView x:Name="groups_lstv_user2" Margin="427.5,168,0,0" HorizontalAlignment="Left" Width="251.5" Height="383" VerticalAlignment="Top">
+                    <ListView x:Name="groups_lstv_user2" Margin="427.42,168,0,0" HorizontalAlignment="Left" Width="251.5" Height="383" VerticalAlignment="Top">
                         <ListView.ContextMenu>
                             <ContextMenu>
                                 <ContextMenu.ContextMenu>
@@ -164,26 +167,90 @@
                         </ListView.View>
                     </ListView>
                     <Button x:Name="btn_groups_load" Content="Загрузка данных" Margin="25.5,556,0,0" HorizontalAlignment="Left" Width="253.5" Height="100" VerticalAlignment="Top"/>
-                    <Button x:Name="btn_groups_save" Content="Добавление пользователя в группы" Margin="427.5,556,0,0" HorizontalAlignment="Left" Width="253.5" Height="100" VerticalAlignment="Top"/>
+                    <Button x:Name="btn_groups_save" Content="Добавление пользователя в группы" Margin="427.42,556,0,0" HorizontalAlignment="Left" Width="253.5" Height="100" VerticalAlignment="Top"/>
                     <TextBox x:Name="textbox_Group_newuser" TextWrapping="Wrap" Margin="25.5,42,0,0" HorizontalAlignment="Left" Width="253.5" Height="23" VerticalAlignment="Top"/>
                     <TextBox x:Name="textbox_Group_existuser" TextWrapping="Wrap" Margin="25.5,105,0,0" HorizontalAlignment="Left" Width="253.5" Height="23" VerticalAlignment="Top"/>
                     <Label x:Name="group_label_user1" Content="Новый пользователь" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="25.5,11.04,0,0"/>
                     <Label x:Name="group_label_user2" Content="Существующий пользователь" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="25.5,74.04,0,0"/>
                     <Label x:Name="group_label_lstv1" Content="Группы существующего пользователя" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="25.5,142.04,0,0" Width="253.5"/>
-                    <Label x:Name="group_label_lstv2" Content="Группы для нового пользователя" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="427.5,142.04,0,0" Width="251.5"/>
-                    <Button x:Name="group_btn_right" Content="&gt;" HorizontalAlignment="Left" Margin="284,297.02,0,0" VerticalAlignment="Top" Width="138.5" Height="27.46"/>
-                    <Button x:Name="group_btn_left" Content="&lt;" HorizontalAlignment="Left" Margin="284,343.52,0,0" VerticalAlignment="Top" Width="138.5" Height="27.46"/>
-                    <Button x:Name="group_btn_deleteall" Content="Очистить" HorizontalAlignment="Left" Margin="284,388.52,0,0" VerticalAlignment="Top" Width="138.5" Height="27.46"/>
-                    <Button x:Name="group_btn_moveall" Content="&gt;&gt;&gt;" HorizontalAlignment="Left" Margin="284,250.52,0,0" VerticalAlignment="Top" Width="138.5" Height="27.46"/>
-                    <Button x:Name="group_btn_moveall_left" Content="&lt;&lt;&lt;" HorizontalAlignment="Left" Margin="284,205.52,0,0" VerticalAlignment="Top" Width="138.5" Height="27.46"/>
-                    <GroupBox Header="Копирование групп" Margin="340.5,15.04,0,0" HorizontalAlignment="Left" Width="211" Height="112.96" VerticalAlignment="Top">
+                    <Label x:Name="group_label_lstv2" Content="Группы для нового пользователя" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="427.42,142.04,0,0" Width="251.5"/>
+                    <Button x:Name="group_btn_right" Content="&gt;" HorizontalAlignment="Left" Margin="283.92,297.02,0,0" VerticalAlignment="Top" Width="138.5" Height="27.46"/>
+                    <Button x:Name="group_btn_left" Content="&lt;" HorizontalAlignment="Left" Margin="283.92,343.52,0,0" VerticalAlignment="Top" Width="138.5" Height="27.46"/>
+                    <Button x:Name="group_btn_deleteall" Content="Очистить" HorizontalAlignment="Left" Margin="283.92,388.52,0,0" VerticalAlignment="Top" Width="138.5" Height="27.46"/>
+                    <Button x:Name="group_btn_moveall" Content="&gt;&gt;&gt;" HorizontalAlignment="Left" Margin="283.92,250.52,0,0" VerticalAlignment="Top" Width="138.5" Height="27.46"/>
+                    <Button x:Name="group_btn_moveall_left" Content="&lt;&lt;&lt;" HorizontalAlignment="Left" Margin="283.92,205.52,0,0" VerticalAlignment="Top" Width="138.5" Height="27.46"/>
+                    <GroupBox Header="Копирование групп" Margin="340.42,15.04,0,0" HorizontalAlignment="Left" Width="211" Height="112.96" VerticalAlignment="Top">
                         <Grid HorizontalAlignment="Left" Height="90.667" Margin="0,0,-2,-0.667" VerticalAlignment="Top" Width="201">
                             <RadioButton x:Name="group_radio_one" Content="С источника на одного" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,10,0,0" IsChecked="True"/>
                             <RadioButton x:Name="group_radio_many" Content="С источника для всех в OU" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,29.96,0,0"/>
                             <RadioButton x:Name="group_radio_many2" Content="С источника для нескольких" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,49.92,0,0"/>
                         </Grid>
                     </GroupBox>
-                    <Button x:Name="btn_group_OU" Content="OU" HorizontalAlignment="Left" VerticalAlignment="Top" Width="40.37" Height="23" Margin="284,105,0,0"/>
+                    <Button x:Name="btn_group_OU" Content="OU" HorizontalAlignment="Left" VerticalAlignment="Top" Width="40.37" Height="23" Margin="283.92,105,0,0"/>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="Tab_Inactive" Header="Inactive">
+                <Grid Margin="0,0,-5.13,0.277">
+                    <ListView x:Name="lstv_inactive" Margin="10,262.5,10,10">
+                        <ListView.ContextMenu>
+                            <ContextMenu>
+                                <ContextMenu.ContextMenu>
+                                    <ContextMenu/>
+                                </ContextMenu.ContextMenu>
+                                <MenuItem x:Name="lstv_inactive_disable" Header="Отключить"/>
+                                <MenuItem x:Name="lstv_inactive_del" Header="Удалить из списка"/>
+                            </ContextMenu>
+                        </ListView.ContextMenu>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Enabled" DisplayMemberBinding="{Binding Enabled}" Width="60"/>
+                                <GridViewColumn Header="DisplayName" DisplayMemberBinding="{Binding DisplayName}" Width="250"/>
+                                <GridViewColumn Header="SamAccountname" DisplayMemberBinding="{Binding SamAccountname}" Width="120"/>
+                                <GridViewColumn Header="LastLogonAD" DisplayMemberBinding="{Binding LastLogonAD}" Width="130"/>
+                                <GridViewColumn Header="LastLogonEX" DisplayMemberBinding="{Binding LastLogonEX}" Width="130"/>
+                                <GridViewColumn Header="Whencreated" DisplayMemberBinding="{Binding Whencreated}" Width="130"/>
+                                <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Description}" Width="150"/>
+                                <GridViewColumn Header="mail" DisplayMemberBinding="{Binding mail}" Width="150"/>
+                                <GridViewColumn Header="DistinguishedName" DisplayMemberBinding="{Binding DistinguishedName}" Width="300"/>
+                                <GridViewColumn Header="status" DisplayMemberBinding="{Binding status}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <GroupBox Header="Функции" Height="252.5" VerticalAlignment="Top" Margin="10,5,10,0" BorderBrush="#FFA09F9F">
+                        <Grid Margin="0,0,-2,-4.043">
+                            <GroupBox HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="350" Margin="10,98.623,0,0" Header="Основное меню">
+                                <Grid HorizontalAlignment="Left" Height="79" Margin="0,0,-2,-1.96" VerticalAlignment="Top" Width="340">
+                                    <CheckBox x:Name="inactive_cbox_delgr" Content="Удалить все группы" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="139,9.999,0,0"/>
+                                    <CheckBox x:Name="inactive_cbox_dannie" Content="Очистить данные" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="139,50.196,0,0"/>
+                                    <CheckBox x:Name="inactive_cbox_delman" Content="Удалить менеджеров" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="139,30.098,0,0"/>
+                                    <RadioButton x:Name="inactive_radio_disable" Content="Заблокировать" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,18.286,0,0" IsChecked="True"/>
+                                    <RadioButton x:Name="inactive_radio_move" Content="Перенести" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,38.246,0,0"/>
+                                </Grid>
+                            </GroupBox>
+                            <Button x:Name="inactive_go" Content="В путь" HorizontalAlignment="Left" VerticalAlignment="Top" Width="152" Margin="515,113.583,0,0" Height="44.96"/>
+                            <Button x:Name="inactive_OU" Content="OU" Margin="10,10,0,0" Height="24.46" VerticalAlignment="Top" HorizontalAlignment="Left" Width="42"/>
+                            <TextBox x:Name="inactive_txtbox_ou" HorizontalAlignment="Left" Height="24.46" Margin="57,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="532"/>
+                            <Button x:Name="inactive_load_disabled" Content="Загрузить отключенных" HorizontalAlignment="Left" VerticalAlignment="Top" Width="166" Margin="10,39.46,0,0" Height="24.96"/>
+                            <Button x:Name="inactive_load_6months" Content="Загрузить не активных более" HorizontalAlignment="Left" VerticalAlignment="Top" Width="166" Margin="10,69.42,0,0" Height="24.96"/>
+                            <TextBox x:Name="inactive_months" Height="24.96" TextWrapping="Wrap" VerticalAlignment="Top" Margin="181,69.42,0,0" MaxLines="1" MaxLength="2" HorizontalAlignment="Left" Width="45" TextAlignment="Center"/>
+                            <Button x:Name="Inactive_button_clear" Content="Всего записей: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="166" Margin="10,203.623,0,0"/>
+                            <Button x:Name="inactive_exch_btn" Content="Статус: не подключено" HorizontalAlignment="Left" VerticalAlignment="Top" Width="179" Margin="181,203.623,0,0" Background="Red"/>
+                            <GroupBox Header="Сортировка" HorizontalAlignment="Left" Height="120" VerticalAlignment="Top" Width="145" Margin="365,103.583,0,0">
+                                <Grid HorizontalAlignment="Left" Height="113" VerticalAlignment="Top" Width="135" Margin="0,0,-2,-0.96">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="3*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <RadioButton x:Name="inactive_rb_lastloggonad" Content="LastLogonAD" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,49.92,0,0" Grid.ColumnSpan="2"/>
+                                    <RadioButton x:Name="inactive_rb_displayname" Content="DisplayName" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,34.96,0,0" Grid.ColumnSpan="2"/>
+                                    <RadioButton x:Name="inactive_rb_lastlogonex" Content="LastLogonEX" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,64.88,0,0" Grid.ColumnSpan="2"/>
+                                    <RadioButton x:Name="inactive_rb_whencreated" Content="WhenCreated" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,79.84,0,0" Grid.ColumnSpan="2" IsChecked="True"/>
+                                    <Button x:Name="inactive_btn_sort" Content="Сортировка" HorizontalAlignment="Left" VerticalAlignment="Top" Width="112" Margin="10,10,0,0" Grid.ColumnSpan="2" />
+                                </Grid>
+                            </GroupBox>
+                            <Button x:Name="inactive_btn_delstatus" Content="Удалить польз. со статусом" HorizontalAlignment="Left" VerticalAlignment="Top" Width="180" Margin="231,69.42,0,0" Height="24.203"/>
+                        </Grid>
+                    </GroupBox>
                 </Grid>
             </TabItem>
         </TabControl>
@@ -193,14 +260,14 @@
                 <MenuItem x:Name="btn_export" Header="Выгрузить данные из списка в файл"/>
                 <MenuItem x:Name="Btn_Exit" Header="Выход" Height="23" Margin="0,0,0.998,0"/>
             </MenuItem>
-            <MenuItem Header="Обработка">
+            <MenuItem x:Name="menu_obrab" Header="Обработка">
                 <MenuItem x:Name="btn_GenPasswords" Header="Генерировать всем новые пароли"/>
                 <MenuItem x:Name="btn_allobshie" Header="Пометить все записи как ОБЩИЕ УЗ"/>
                 <MenuItem x:Name="btn_blockall" Header="Заблокировать всех в нижнем списке"/>
                 <MenuItem x:Name="btn_changeall" Header="Изменить данные у всех"/>
                 <MenuItem x:Name="btn_exporttoconsole" Header="Выгрузить в Console список" Background="#FF8ABF39"/>
             </MenuItem>
-            <MenuItem Header="Настройки">
+            <MenuItem x:Name="menu_settings" Header="Настройки">
                 <MenuItem Header="Изменение данных">
                     <CheckBox x:Name="chk_all" Content="Убрать всем" IsChecked="True"/>
                     <Label Content="-------------------" IsEnabled="False"/>
@@ -223,7 +290,6 @@
 
     </Grid>
 </Window>
-
 
 "@
 
