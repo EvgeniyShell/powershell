@@ -197,8 +197,8 @@
                                 <ContextMenu.ContextMenu>
                                     <ContextMenu/>
                                 </ContextMenu.ContextMenu>
-                                <MenuItem x:Name="lstv_inactive_disable" Header="Отключить"/>
                                 <MenuItem x:Name="lstv_inactive_del" Header="Удалить из списка"/>
+                                <MenuItem x:Name="lstv_inactive_disable" Header="Отключить" Background="Red"/>
                             </ContextMenu>
                         </ListView.ContextMenu>
                         <ListView.View>
@@ -206,13 +206,13 @@
                                 <GridViewColumn Header="Enabled" DisplayMemberBinding="{Binding Enabled}" Width="60"/>
                                 <GridViewColumn Header="DisplayName" DisplayMemberBinding="{Binding DisplayName}" Width="250"/>
                                 <GridViewColumn Header="SamAccountname" DisplayMemberBinding="{Binding SamAccountname}" Width="120"/>
-                                <GridViewColumn Header="LastLogonAD" DisplayMemberBinding="{Binding LastLogonAD}" Width="130"/>
-                                <GridViewColumn Header="LastLogonEX" DisplayMemberBinding="{Binding LastLogonEX}" Width="130"/>
-                                <GridViewColumn Header="Whencreated" DisplayMemberBinding="{Binding Whencreated}" Width="130"/>
+                                <GridViewColumn Header="LastLogonAD" DisplayMemberBinding="{Binding LastLogonAD}" Width="100"/>
+                                <GridViewColumn Header="LastLogonEX" DisplayMemberBinding="{Binding LastLogonEX}" Width="100"/>
+                                <GridViewColumn Header="Whencreated" DisplayMemberBinding="{Binding Whencreated}" Width="100"/>
                                 <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Description}" Width="150"/>
                                 <GridViewColumn Header="mail" DisplayMemberBinding="{Binding mail}" Width="150"/>
                                 <GridViewColumn Header="DistinguishedName" DisplayMemberBinding="{Binding DistinguishedName}" Width="300"/>
-                                <GridViewColumn Header="status" DisplayMemberBinding="{Binding status}"/>
+                                <GridViewColumn Header="status" DisplayMemberBinding="{Binding status}" Width="50"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -234,7 +234,7 @@
                             <Button x:Name="inactive_load_6months" Content="Загрузить не активных более" HorizontalAlignment="Left" VerticalAlignment="Top" Width="166" Margin="10,69.42,0,0" Height="24.96"/>
                             <TextBox x:Name="inactive_months" Height="24.96" TextWrapping="Wrap" VerticalAlignment="Top" Margin="181,69.42,0,0" MaxLines="1" MaxLength="2" HorizontalAlignment="Left" Width="45" TextAlignment="Center"/>
                             <Button x:Name="Inactive_button_clear" Content="Всего записей: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="166" Margin="10,203.623,0,0"/>
-                            <Button x:Name="inactive_exch_btn" Content="Статус: не подключено" HorizontalAlignment="Left" VerticalAlignment="Top" Width="179" Margin="181,203.623,0,0" Background="Red"/>
+                            <Button x:Name="inactive_exch_btn" Content="Статус: не подключено" HorizontalAlignment="Left" VerticalAlignment="Top" Width="179" Margin="181,203.623,0,0" Background="Red" Foreground="White"/>
                             <GroupBox Header="Сортировка" HorizontalAlignment="Left" Height="120" VerticalAlignment="Top" Width="145" Margin="365,103.583,0,0">
                                 <Grid HorizontalAlignment="Left" Height="113" VerticalAlignment="Top" Width="135" Margin="0,0,-2,-0.96">
                                     <Grid.ColumnDefinitions>
@@ -248,7 +248,9 @@
                                     <Button x:Name="inactive_btn_sort" Content="Сортировка" HorizontalAlignment="Left" VerticalAlignment="Top" Width="112" Margin="10,10,0,0" Grid.ColumnSpan="2" />
                                 </Grid>
                             </GroupBox>
-                            <Button x:Name="inactive_btn_delstatus" Content="Удалить польз. со статусом" HorizontalAlignment="Left" VerticalAlignment="Top" Width="180" Margin="231,69.42,0,0" Height="24.203"/>
+                            <Button x:Name="inactive_btn_delstatus" Content="Удалить польз. со статусом" HorizontalAlignment="Left" VerticalAlignment="Top" Width="180" Margin="515,199.38,0,0" Height="24.203"/>
+                            <TextBox x:Name="inactive_txtbox_filter" HorizontalAlignment="Left" Height="24.46" Margin="403,39.46,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="186"/>
+                            <Label Content="Фильтр" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="352.96,38.96,0,0"/>
                         </Grid>
                     </GroupBox>
                 </Grid>

@@ -1,4 +1,4 @@
-﻿Clear-Host
+﻿#Clear-Host
 
 Add-Type -AssemblyName PresentationFramework, PresentationCore, System.Windows.Forms
 Add-Type -Name Window -Namespace Console -MemberDefinition '

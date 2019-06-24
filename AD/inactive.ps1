@@ -159,6 +159,19 @@ function inactive ($enabled = "all")
 {
 $inactives = ""
 $connection = testconnection
+if ($connection -eq "on")
+{
+    $ok = [System.Windows.Forms.MessageBox]::Show("Показать с проверкой из Exchange?","Уведомление","YESNO","Information")
+    if ($ok -eq "Yes")
+    {
+        $connection = "on"
+    }
+    if ($ok -eq "No")
+    {
+        $connection = "off"
+    }
+}
+
     if (!($xMF_inactive_txtbox_ou.Text -eq ""))
     {
          switch ($enabled)
@@ -167,6 +180,17 @@ $connection = testconnection
                 "false" { $inactives = Get-ADUser -SearchBase $xMF_inactive_txtbox_ou.Text -filter {(Enabled -eq $false)} -Properties mail,DisplayName,LastLogonDate,Description,enabled,SamAccountname,DistinguishedName,Whencreated | sort LastLogonDate -Descending | select mail,DisplayName,LastLogonDate,Description,Enabled,SamAccountname,DistinguishedName,Whencreated }
                 "time" {$inactives = Get-ADUser -SearchBase $xMF_inactive_txtbox_ou.Text -Filter {(Enabled -eq $True)} -Properties mail,DisplayName,LastLogonDate,Description,enabled,SamAccountname,DistinguishedName,Whencreated | ?{($_.LastLogonDate -lt $time) -and ($_.Whencreated -lt $timeCreated)} | sort LastLogonDate -Descending | select mail,DisplayName,LastLogonDate,Description,enabled,SamAccountname,DistinguishedName,Whencreated}
                 "default" { [System.Windows.Forms.MessageBox]::Show("Неправильно значение в функции","Уведомление","OK","ERROR")}
+            }
+
+            #Для точной фильтрации
+            if (!($xMF_inactive_txtbox_filter.Text.Length -eq 0))
+            {
+                [array]$list = $xMF_inactive_txtbox_filter.Text -split ","
+                for ($j=0 ;$j -ne $list.Count ; $j++)
+                {
+                [string]$list2 = $list[$j]
+                $inactives = $inactives | ?{!($_.DistinguishedName -like "*$list2*")}
+                }
             }
 
     $xMF_prBar.Value = 0
@@ -390,6 +414,8 @@ $xMF_Inactive_button_clear.add_click({
     {
         $xMF_lstv_inactive.items.Clear()
         $xMF_Inactive_button_clear.Content = "Всего записей: "+$xMF_lstv_inactive.items.count
+        $xmf_label_prBar.Content = ""
+        $xMF_prBar.Value = 0
     }
     }
 
@@ -404,6 +430,15 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
 {
     if ($xMF_inactive_radio_disable.IsChecked -eq $true)
     {
+
+    $ok = [System.Windows.Forms.MessageBox]::Show("Обработать?","Уведомление","OKCANCEL","information")
+    if ($ok -eq "OK")
+    {
+    #Переменные для счетчиков выполнения
+    $count = 0
+    $counterr = 0
+    $xMF_label_prBar.Content = ""
+
         for ($i=0 ;$i -ne $xMF_lstv_inactive.Items.Count;  $i++)
         {
             $complete = $False
@@ -413,7 +448,7 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
                 $user = $xMF_lstv_inactive.Items[$i].SamAccountname
                 try
                 {
-                    Disable-ADAccount -Identity $user -WhatIf
+                    Disable-ADAccount -Identity $user
                     write-host "Пользователь отключен:" $user
                     $complete = $True
                 }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка отключения ->" $Error[0].Exception.Message}
@@ -423,9 +458,16 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
                     try
                     {
                         $lastlogon = $xMF_lstv_inactive.Items[$i].LastLogonAd
-                        Set-ADUser $user -Description "Последний вход в учетную запись: $lastlogon" -WhatIf  
-                        write-host Description: Последний вход в учетную запись ($lastlogon)           
-                    }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка Description ->" $Error[0].Exception.Message}
+                        $Created = $xMF_lstv_inactive.Items[$i].Whencreated
+                        if (!($lastlogon -eq "") -and !($lastlogon -eq $null)){
+                        Set-ADUser $user -Description "Посл. вход в УЗ: ($lastlogon), УЗ создана: $Created"
+                        write-host "Description: Посл. вход в УЗ:"($lastlogon)", УЗ создана: $Created"
+                        }else{Set-ADUser $user -Description "Посл. вход в УЗ: Никогда, УЗ создана: $Created"
+                        write-host "Description: Посл. вход в УЗ: Никогда, УЗ создана: $Created" }
+                        $count++
+
+                    }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка Description ->" $Error[0].Exception.Message
+                    $counterr++}
 
                     if ($xMF_inactive_cbox_delman.IsChecked -eq $true)
                     {
@@ -437,6 +479,8 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
                         chkboxdeletegroups -user $user -exception "mdaemon"
                     }
 
+                    $xMF_label_prBar.Content = "Обработано: $count , Пропущено: $counterr"
+                    $Form_Main.Dispatcher.Invoke([action]{},"Render")
                     $xMF_lstv_inactive.Items[$i].status = "disabled"
 
                 }
@@ -462,7 +506,8 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
             $xMF_lstv_inactive.Items.Refresh()
             $xMF_Inactive_button_clear.Content = "Всего записей: "+$xMF_lstv_inactive.items.count
             }
-
+    $xMF_lstv_inactive.Items.Refresh()
+    } #if ($ok -eq "OK")
     } # ($xMF_inactive_radio_disable.IsChecked -eq $true)
 }# (!($xMF_lstv_inactive.Items.Count -eq 0))
 
@@ -485,7 +530,7 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
                 $user = $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].SamAccountname
                 try
                 {
-                    Disable-ADAccount -Identity $user -WhatIf
+                    Disable-ADAccount -Identity $user
                     write-host "Пользователь отключен:" $user
                     $complete = $True
                 }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка отключения ->" $Error[0].Exception.Message}
@@ -495,9 +540,16 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
                     try
                     {
                         $lastlogon = $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].LastLogonAd
-                        Set-ADUser $user -Description "Последний вход в учетную запись: $lastlogon" -WhatIf  
-                        write-host Description: Последний вход в учетную запись ($lastlogon)         
-                    }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка Description ->" $Error[0].Exception.Message}
+                        $Created = $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].Whencreated
+                        if (!($lastlogon -eq "") -and !($lastlogon -eq $null)){
+                        Set-ADUser $user -Description "Посл. вход в УЗ: ($lastlogon), УЗ создана: $Created"
+                        write-host "Description: Посл. вход в УЗ:"($lastlogon)", УЗ создана: $Created"
+                        }else{Set-ADUser $user -Description "Посл. вход в УЗ: Никогда, УЗ создана: $Created"
+                        write-host "Description: Посл. вход в УЗ: Никогда, УЗ создана: $Created" }
+                        $xMF_label_prBar.Content = "Обработано: $user"      
+                               
+                    }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка Description ->" $Error[0].Exception.Message
+                    $xMF_label_prBar.Content = "НЕ обработано: $user"}
 
                     if ($xMF_inactive_cbox_delman.IsChecked -eq $true)
                     {
@@ -542,6 +594,8 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
             }
             $xMF_lstv_inactive.Items.Refresh()
             $xMF_Inactive_button_clear.Content = "Всего записей: "+$xMF_lstv_inactive.items.count
+            $xMF_label_prBar.Content = ""
+            $xMF_prBar.Value = 0
             }
 
 }
