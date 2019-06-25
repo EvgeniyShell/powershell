@@ -1,4 +1,4 @@
-#Define
+п»ї#Define
 $xMF_inactive_txtbox_ou.Text = "OU=OU_RT,DC=ASO,DC=RT,DC=LOCAL"
 $xMF_inactive_months.Text = "6"
 $global:sortcheck = $true
@@ -46,7 +46,7 @@ if ($global:sortcheck -eq $true)
         $xMF_lstv_inactive.items.Add($tempsort)
     }
 
-    Write-Host "Сортировка прошла по возрастанию"
+    Write-Host "РЎРѕСЂС‚РёСЂРѕРІРєР° РїСЂРѕС€Р»Р° РїРѕ РІРѕР·СЂР°СЃС‚Р°РЅРёСЋ"
 
 
 
@@ -88,7 +88,7 @@ elseif ($global:sortcheck -eq $false)
     }
 
 
-    Write-Host "Сортировка прошла по убыванию"
+    Write-Host "РЎРѕСЂС‚РёСЂРѕРІРєР° РїСЂРѕС€Р»Р° РїРѕ СѓР±С‹РІР°РЅРёСЋ"
 }
 
 }
@@ -97,7 +97,7 @@ elseif ($global:sortcheck -eq $false)
 
 
 #
-#Функция для тестирования, загружено ли удаленное управление Exchange
+#Р¤СѓРЅРєС†РёСЏ РґР»СЏ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ, Р·Р°РіСЂСѓР¶РµРЅРѕ Р»Рё СѓРґР°Р»РµРЅРЅРѕРµ СѓРїСЂР°РІР»РµРЅРёРµ Exchange
 #
 function testconnection
 {
@@ -105,12 +105,12 @@ function testconnection
     {
         if ($global:Session.State -eq "Opened")
         {
-            $xMF_inactive_exch_btn.Content = "Статус: подключено"
+            $xMF_inactive_exch_btn.Content = "РЎС‚Р°С‚СѓСЃ: РїРѕРґРєР»СЋС‡РµРЅРѕ"
             $xMF_inactive_exch_btn.Background = "green"
             return "on"
         }elseif ($global:Session.State -eq "Closed")
         {
-            $xMF_inactive_exch_btn.Content = "Статус: не подключено"
+            $xMF_inactive_exch_btn.Content = "РЎС‚Р°С‚СѓСЃ: РЅРµ РїРѕРґРєР»СЋС‡РµРЅРѕ"
             $xMF_inactive_exch_btn.Background = "red"
             return "off"
         }
@@ -131,7 +131,7 @@ function exch_connect
         $statusconnect = "OK"
     }catch
     {
-        write-host -BackgroundColor Red -ForegroundColor Yellow "Подключение не к Exchange удалось: ->" $error[0].Exception.Message
+        write-host -BackgroundColor Red -ForegroundColor Yellow "РџРѕРґРєР»СЋС‡РµРЅРёРµ РЅРµ Рє Exchange СѓРґР°Р»РѕСЃСЊ: ->" $error[0].Exception.Message
     }
     if ($statusconnect -eq "OK")
     {
@@ -140,7 +140,7 @@ function exch_connect
 }
 
 #
-#Функция для проверки на пустое значение
+#Р¤СѓРЅРєС†РёСЏ РґР»СЏ РїСЂРѕРІРµСЂРєРё РЅР° РїСѓСЃС‚РѕРµ Р·РЅР°С‡РµРЅРёРµ
 #
 function empty ($source)
 {
@@ -161,7 +161,7 @@ $inactives = ""
 $connection = testconnection
 if ($connection -eq "on")
 {
-    $ok = [System.Windows.Forms.MessageBox]::Show("Показать с проверкой из Exchange?","Уведомление","YESNO","Information")
+    $ok = [System.Windows.Forms.MessageBox]::Show("РџРѕРєР°Р·Р°С‚СЊ СЃ РїСЂРѕРІРµСЂРєРѕР№ РёР· Exchange?","РЈРІРµРґРѕРјР»РµРЅРёРµ","YESNO","Information")
     if ($ok -eq "Yes")
     {
         $connection = "on"
@@ -179,10 +179,10 @@ if ($connection -eq "on")
                 "all" { $inactives = Get-ADUser -SearchBase $xMF_inactive_txtbox_ou.Text -filter * -Properties mail,DisplayName,LastLogonDate,Description,enabled,SamAccountname,DistinguishedName,Whencreated | sort LastLogonDate -Descending | select mail,DisplayName,LastLogonDate,Description,Enabled,SamAccountname,DistinguishedName,Whencreated}
                 "false" { $inactives = Get-ADUser -SearchBase $xMF_inactive_txtbox_ou.Text -filter {(Enabled -eq $false)} -Properties mail,DisplayName,LastLogonDate,Description,enabled,SamAccountname,DistinguishedName,Whencreated | sort LastLogonDate -Descending | select mail,DisplayName,LastLogonDate,Description,Enabled,SamAccountname,DistinguishedName,Whencreated }
                 "time" {$inactives = Get-ADUser -SearchBase $xMF_inactive_txtbox_ou.Text -Filter {(Enabled -eq $True)} -Properties mail,DisplayName,LastLogonDate,Description,enabled,SamAccountname,DistinguishedName,Whencreated | ?{($_.LastLogonDate -lt $time) -and ($_.Whencreated -lt $timeCreated)} | sort LastLogonDate -Descending | select mail,DisplayName,LastLogonDate,Description,enabled,SamAccountname,DistinguishedName,Whencreated}
-                "default" { [System.Windows.Forms.MessageBox]::Show("Неправильно значение в функции","Уведомление","OK","ERROR")}
+                "default" { [System.Windows.Forms.MessageBox]::Show("РќРµРїСЂР°РІРёР»СЊРЅРѕ Р·РЅР°С‡РµРЅРёРµ РІ С„СѓРЅРєС†РёРё","РЈРІРµРґРѕРјР»РµРЅРёРµ","OK","ERROR")}
             }
 
-            #Для точной фильтрации
+            #Р”Р»СЏ С‚РѕС‡РЅРѕР№ С„РёР»СЊС‚СЂР°С†РёРё
             if (!($xMF_inactive_txtbox_filter.Text.Length -eq 0))
             {
                 [array]$list = $xMF_inactive_txtbox_filter.Text -split ","
@@ -198,7 +198,7 @@ if ($connection -eq "on")
     $SCount = $inactives.Count
     $Spisok = @()
     $Global:spisoksort= @()
-    $xMF_Inactive_button_clear.Content = "Всего записей: "+$SCount
+    $xMF_Inactive_button_clear.Content = "Р’СЃРµРіРѕ Р·Р°РїРёСЃРµР№: "+$SCount
 
     if (!($inactives.Count -lt 0))
     {
@@ -248,24 +248,12 @@ if ($connection -eq "on")
                 }
                 $xMF_lstv_inactive.Items.Add($Spisok)
                 $xMF_lstv_inactive.Items.Refresh()
-
-        <#$Global:spisoksort += [PSCustomObject]@{
-                'Enabled' = $inactives[$i].Enabled
-                'DisplayName'= empty($inactives[$i].DisplayName)
-                'SamAccountname' = empty($inactives[$i].SamAccountname)
-                'LastLogonAD' = $inactives[$i].LastLogonDate
-                'LastLogonEX' = $mailbox2
-                'WhenCreated' = $inactives[$i].Whencreated
-                'Description' = empty($inactives[$i].Description)
-                'mail' = empty($inactives[$i].mail)
-                'DistinguishedName' = empty($inactives[$i].DistinguishedName)
-                }#>
         
         if ($connection -eq "on")
         {
             $SCount2 = $SCount2 + 1
             $xMF_prBar.Value = $SCount2
-            $xMF_label_prBar.Content = "Обработано: "+$SCount2+" из "+$SCount
+            $xMF_label_prBar.Content = "РћР±СЂР°Р±РѕС‚Р°РЅРѕ: "+$SCount2+" РёР· "+$SCount
             $Form_Main.Dispatcher.Invoke([action]{},"Render")
         }elseif ($connection -eq "off")
         {
@@ -325,7 +313,7 @@ $xMF_inactive_exch_btn.add_click({
     $testconn = testconnection
     if ($testconn -eq "off")
     {
-        $ok = [System.Windows.Forms.MessageBox]::Show("Подключиться к почтовому серверу?","Уведомление","OKCANCEL","Information")
+        $ok = [System.Windows.Forms.MessageBox]::Show("РџРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ Рє РїРѕС‡С‚РѕРІРѕРјСѓ СЃРµСЂРІРµСЂСѓ?","РЈРІРµРґРѕРјР»РµРЅРёРµ","OKCANCEL","Information")
         if ($ok -eq "OK")
         {
             exch_connect
@@ -334,7 +322,7 @@ $xMF_inactive_exch_btn.add_click({
     }
     if ($testconn -eq "on")
     {
-        $ok = [System.Windows.Forms.MessageBox]::Show("Отключиться от почтового сервера?","Уведомление","OKCANCEL","Information")
+        $ok = [System.Windows.Forms.MessageBox]::Show("РћС‚РєР»СЋС‡РёС‚СЊСЃСЏ РѕС‚ РїРѕС‡С‚РѕРІРѕРіРѕ СЃРµСЂРІРµСЂР°?","РЈРІРµРґРѕРјР»РµРЅРёРµ","OKCANCEL","Information")
         if ($ok -eq "OK")
         {
             Remove-PSSession $Global:Session
@@ -369,7 +357,7 @@ $windowSelectOU.Activate()
 $xMF_inactive_load_disabled.add_click({
 
 inactive -enabled "false"
-$xMF_Inactive_button_clear.Content = "Всего записей: "+$xMF_lstv_inactive.items.count
+$xMF_Inactive_button_clear.Content = "Р’СЃРµРіРѕ Р·Р°РїРёСЃРµР№: "+$xMF_lstv_inactive.items.count
 })
 
 
@@ -377,20 +365,20 @@ $xMF_inactive_load_6months.add_click({
 $time = ([System.DateTime]::Today).AddMonths(-$xMF_inactive_months.Text)
 $timeCreated = ([System.DateTime]::Today).AddMonths(-$xMF_inactive_months.Text+3)
 inactive -enabled "time"
-$xMF_Inactive_button_clear.Content = "Всего записей: "+$xMF_lstv_inactive.items.count
+$xMF_Inactive_button_clear.Content = "Р’СЃРµРіРѕ Р·Р°РїРёСЃРµР№: "+$xMF_lstv_inactive.items.count
 })
 
 #
-#Кнопка удаления записей
+#РљРЅРѕРїРєР° СѓРґР°Р»РµРЅРёСЏ Р·Р°РїРёСЃРµР№
 #
 $xMF_lstv_inactive_del.add_click({
-    #Проверка количества выделенных записей
+    #РџСЂРѕРІРµСЂРєР° РєРѕР»РёС‡РµСЃС‚РІР° РІС‹РґРµР»РµРЅРЅС‹С… Р·Р°РїРёСЃРµР№
     $count = $xMF_lstv_inactive.SelectedItems.Count
 
 
     if ($count -gt 0)
     {
-        #Пока количество выделеных записей больше нуля, удалять записи
+        #РџРѕРєР° РєРѕР»РёС‡РµСЃС‚РІРѕ РІС‹РґРµР»РµРЅС‹С… Р·Р°РїРёСЃРµР№ Р±РѕР»СЊС€Рµ РЅСѓР»СЏ, СѓРґР°Р»СЏС‚СЊ Р·Р°РїРёСЃРё
         while ($count -gt 0)
         {
             $xMF_lstv_inactive.Items.Remove($xMF_lstv_inactive.SelectedItem)
@@ -398,22 +386,22 @@ $xMF_lstv_inactive_del.add_click({
         }
     }
 
-    $xMF_Inactive_button_clear.Content = "Всего записей: "+$xMF_lstv_inactive.items.count
+    $xMF_Inactive_button_clear.Content = "Р’СЃРµРіРѕ Р·Р°РїРёСЃРµР№: "+$xMF_lstv_inactive.items.count
 })
 
 
 #
-#Кнопка очистки lstv
+#РљРЅРѕРїРєР° РѕС‡РёСЃС‚РєРё lstv
 #
 $xMF_Inactive_button_clear.add_click({
 
     if (!($xMF_lstv_inactive.items.Count -eq 0))
     {
-    $info = [System.Windows.Forms.MessageBox]::Show("Очистить список?","Уведомление","OKCANCEL","information")
+    $info = [System.Windows.Forms.MessageBox]::Show("РћС‡РёСЃС‚РёС‚СЊ СЃРїРёСЃРѕРє?","РЈРІРµРґРѕРјР»РµРЅРёРµ","OKCANCEL","information")
     if ($info -eq "OK")
     {
         $xMF_lstv_inactive.items.Clear()
-        $xMF_Inactive_button_clear.Content = "Всего записей: "+$xMF_lstv_inactive.items.count
+        $xMF_Inactive_button_clear.Content = "Р’СЃРµРіРѕ Р·Р°РїРёСЃРµР№: "+$xMF_lstv_inactive.items.count
         $xmf_label_prBar.Content = ""
         $xMF_prBar.Value = 0
     }
@@ -422,7 +410,7 @@ $xMF_Inactive_button_clear.add_click({
 })
 
 #
-# Основная кнопка
+# РћСЃРЅРѕРІРЅР°СЏ РєРЅРѕРїРєР°
 #
 $xMF_inactive_go.add_click({
 
@@ -431,10 +419,10 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
     if ($xMF_inactive_radio_disable.IsChecked -eq $true)
     {
 
-    $ok = [System.Windows.Forms.MessageBox]::Show("Обработать?","Уведомление","OKCANCEL","information")
+    $ok = [System.Windows.Forms.MessageBox]::Show("РћР±СЂР°Р±РѕС‚Р°С‚СЊ?","РЈРІРµРґРѕРјР»РµРЅРёРµ","OKCANCEL","information")
     if ($ok -eq "OK")
     {
-    #Переменные для счетчиков выполнения
+    #РџРµСЂРµРјРµРЅРЅС‹Рµ РґР»СЏ СЃС‡РµС‚С‡РёРєРѕРІ РІС‹РїРѕР»РЅРµРЅРёСЏ
     $count = 0
     $counterr = 0
     $xMF_label_prBar.Content = ""
@@ -449,9 +437,9 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
                 try
                 {
                     Disable-ADAccount -Identity $user
-                    write-host "Пользователь отключен:" $user
+                    write-host "РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РѕС‚РєР»СЋС‡РµРЅ:" $user
                     $complete = $True
-                }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка отключения ->" $Error[0].Exception.Message}
+                }catch{write-host -BackgroundColor red -ForegroundColor Yellow "РћС€РёР±РєР° РѕС‚РєР»СЋС‡РµРЅРёСЏ ->" $Error[0].Exception.Message}
 
                 if ($complete -eq $True)
                 {
@@ -460,13 +448,13 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
                         $lastlogon = $xMF_lstv_inactive.Items[$i].LastLogonAd
                         $Created = $xMF_lstv_inactive.Items[$i].Whencreated
                         if (!($lastlogon -eq "") -and !($lastlogon -eq $null)){
-                        Set-ADUser $user -Description "Посл. вход в УЗ: ($lastlogon), УЗ создана: $Created"
-                        write-host "Description: Посл. вход в УЗ:"($lastlogon)", УЗ создана: $Created"
-                        }else{Set-ADUser $user -Description "Посл. вход в УЗ: Никогда, УЗ создана: $Created"
-                        write-host "Description: Посл. вход в УЗ: Никогда, УЗ создана: $Created" }
+                        Set-ADUser $user -Description "РџРѕСЃР». РІС…РѕРґ РІ РЈР—: ($lastlogon), РЈР— СЃРѕР·РґР°РЅР°: $Created"
+                        write-host "Description: РџРѕСЃР». РІС…РѕРґ РІ РЈР—:"($lastlogon)", РЈР— СЃРѕР·РґР°РЅР°: $Created"
+                        }else{Set-ADUser $user -Description "РџРѕСЃР». РІС…РѕРґ РІ РЈР—: РќРёРєРѕРіРґР°, РЈР— СЃРѕР·РґР°РЅР°: $Created"
+                        write-host "Description: РџРѕСЃР». РІС…РѕРґ РІ РЈР—: РќРёРєРѕРіРґР°, РЈР— СЃРѕР·РґР°РЅР°: $Created" }
                         $count++
 
-                    }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка Description ->" $Error[0].Exception.Message
+                    }catch{write-host -BackgroundColor red -ForegroundColor Yellow "РћС€РёР±РєР° Description ->" $Error[0].Exception.Message
                     $counterr++}
 
                     if ($xMF_inactive_cbox_delman.IsChecked -eq $true)
@@ -479,7 +467,7 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
                         chkboxdeletegroups -user $user -exception "mdaemon"
                     }
 
-                    $xMF_label_prBar.Content = "Обработано: $count , Пропущено: $counterr"
+                    $xMF_label_prBar.Content = "РћР±СЂР°Р±РѕС‚Р°РЅРѕ: $count , РџСЂРѕРїСѓС‰РµРЅРѕ: $counterr"
                     $Form_Main.Dispatcher.Invoke([action]{},"Render")
                     $xMF_lstv_inactive.Items[$i].status = "disabled"
 
@@ -487,7 +475,7 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
             }
 
         }
-            $ok = [System.Windows.Forms.MessageBox]::Show("Очистить записи со статусом Disabled?","Уведомление","OKCANCEL","Information")
+            $ok = [System.Windows.Forms.MessageBox]::Show("РћС‡РёСЃС‚РёС‚СЊ Р·Р°РїРёСЃРё СЃРѕ СЃС‚Р°С‚СѓСЃРѕРј Disabled?","РЈРІРµРґРѕРјР»РµРЅРёРµ","OKCANCEL","Information")
             if ($ok -eq "OK")
             {
             $item = 0
@@ -504,12 +492,102 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
                 }
             }
             $xMF_lstv_inactive.Items.Refresh()
-            $xMF_Inactive_button_clear.Content = "Всего записей: "+$xMF_lstv_inactive.items.count
+            $xMF_Inactive_button_clear.Content = "Р’СЃРµРіРѕ Р·Р°РїРёСЃРµР№: "+$xMF_lstv_inactive.items.count
             }
     $xMF_lstv_inactive.Items.Refresh()
     } #if ($ok -eq "OK")
     } # ($xMF_inactive_radio_disable.IsChecked -eq $true)
-}# (!($xMF_lstv_inactive.Items.Count -eq 0))
+
+    if ($xMF_inactive_radio_move.IsChecked -eq $true)
+    {
+    $ok = [System.Windows.Forms.MessageBox]::Show("РћР±СЂР°Р±РѕС‚Р°С‚СЊ?","РЈРІРµРґРѕРјР»РµРЅРёРµ","OKCANCEL","information")
+    if ($ok -eq "OK")
+    {
+    #РџРµСЂРµРјРµРЅРЅС‹Рµ РґР»СЏ СЃС‡РµС‚С‡РёРєРѕРІ РІС‹РїРѕР»РЅРµРЅРёСЏ
+    $count = 0
+    $counterr = 0
+    $xMF_label_prBar.Content = ""
+
+        for ($i=0 ;$i -ne $xMF_lstv_inactive.Items.Count;  $i++)
+        {
+            $complete = $False
+            if (($xMF_lstv_inactive.Items[$i].Enabled -eq "False"))
+            {
+                $user = $xMF_lstv_inactive.Items[$i].SamAccountname
+                Write-Host "----------------------" $xMF_lstv_inactive.Items[$i].SamAccountname "--------------------------------"
+
+                if ($xMF_inactive_cbox_dannie.IsChecked -eq $true)
+                {
+                    try
+                    {
+                        Set-ADUser $user -Initials $null -Office $null -OfficePhone $null -Department $null -Title $null -City $null -StreetAddress $null -PostalCode $null -Country $null -Company $null
+                        write-host "Р”Р°РЅРЅС‹Рµ Сѓ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РѕС‡РёС‰РµРЅС‹:" $user
+                    }catch{write-host -BackgroundColor red -ForegroundColor Yellow "РћС€РёР±РєР° РѕС‡РёСЃС‚РєРё ->" $Error[0].Exception.Message}
+                }
+
+                if ($xMF_inactive_cbox_delman.IsChecked -eq $true)
+                {
+                    managers -user $user -empty $true -short $true
+                }
+
+                if ($xMF_inactive_cbox_delgr.IsChecked -eq $true)
+                {
+                    chkboxdeletegroups -user $user -exception "mdaemon"
+                }
+
+
+                <#Write-Host "----------------------" $xMF_lstv_inactive.Items[$i].SamAccountname "--------------------------------"
+                $user = $xMF_lstv_inactive.Items[$i].SamAccountname
+                try
+                {
+                    Disable-ADAccount -Identity $user
+                    write-host "РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РѕС‚РєР»СЋС‡РµРЅ:" $user
+                    $complete = $True
+                }catch{write-host -BackgroundColor red -ForegroundColor Yellow "РћС€РёР±РєР° РѕС‚РєР»СЋС‡РµРЅРёСЏ ->" $Error[0].Exception.Message}
+
+                if ($complete -eq $True)
+                {
+                    try
+                    {
+                        $lastlogon = $xMF_lstv_inactive.Items[$i].LastLogonAd
+                        $Created = $xMF_lstv_inactive.Items[$i].Whencreated
+                        if (!($lastlogon -eq "") -and !($lastlogon -eq $null)){
+                        Set-ADUser $user -Description "РџРѕСЃР». РІС…РѕРґ РІ РЈР—: ($lastlogon), РЈР— СЃРѕР·РґР°РЅР°: $Created"
+                        write-host "Description: РџРѕСЃР». РІС…РѕРґ РІ РЈР—:"($lastlogon)", РЈР— СЃРѕР·РґР°РЅР°: $Created"
+                        }else{Set-ADUser $user -Description "РџРѕСЃР». РІС…РѕРґ РІ РЈР—: РќРёРєРѕРіРґР°, РЈР— СЃРѕР·РґР°РЅР°: $Created"
+                        write-host "Description: РџРѕСЃР». РІС…РѕРґ РІ РЈР—: РќРёРєРѕРіРґР°, РЈР— СЃРѕР·РґР°РЅР°: $Created" }
+                        $count++
+
+                    }catch{write-host -BackgroundColor red -ForegroundColor Yellow "РћС€РёР±РєР° Description ->" $Error[0].Exception.Message
+                    $counterr++}
+
+                    if ($xMF_inactive_cbox_delman.IsChecked -eq $true)
+                    {
+                        managers -user $user -empty $true -short $true
+                    }
+
+                    if ($xMF_inactive_cbox_delgr.IsChecked -eq $true)
+                    {
+                        chkboxdeletegroups -user $user -exception "mdaemon"
+                    }
+
+                    $xMF_label_prBar.Content = "РћР±СЂР°Р±РѕС‚Р°РЅРѕ: $count , РџСЂРѕРїСѓС‰РµРЅРѕ: $counterr"
+                    $Form_Main.Dispatcher.Invoke([action]{},"Render")
+                    $xMF_lstv_inactive.Items[$i].status = "disabled"
+
+                } # if ($complete -eq $True)
+                #>
+
+            } # if (($xMF_lstv_inactive.Items[$i].Enabled -eq "True"))
+
+        } # for ($i=0 ;$i -ne $xMF_lstv_inactive.Items.Count;  $i++)
+            
+    } #if ($ok -eq "OK")
+    }# -----END if ($xMF_inactive_radio_move.IsChecked -eq $true)
+
+
+}# -------END (!($xMF_lstv_inactive.Items.Count -eq 0))
+
 
 })
 
@@ -531,9 +609,9 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
                 try
                 {
                     Disable-ADAccount -Identity $user
-                    write-host "Пользователь отключен:" $user
+                    write-host "РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РѕС‚РєР»СЋС‡РµРЅ:" $user
                     $complete = $True
-                }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка отключения ->" $Error[0].Exception.Message}
+                }catch{write-host -BackgroundColor red -ForegroundColor Yellow "РћС€РёР±РєР° РѕС‚РєР»СЋС‡РµРЅРёСЏ ->" $Error[0].Exception.Message}
 
                 if ($complete -eq $True)
                 {
@@ -542,14 +620,14 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
                         $lastlogon = $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].LastLogonAd
                         $Created = $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].Whencreated
                         if (!($lastlogon -eq "") -and !($lastlogon -eq $null)){
-                        Set-ADUser $user -Description "Посл. вход в УЗ: ($lastlogon), УЗ создана: $Created"
-                        write-host "Description: Посл. вход в УЗ:"($lastlogon)", УЗ создана: $Created"
-                        }else{Set-ADUser $user -Description "Посл. вход в УЗ: Никогда, УЗ создана: $Created"
-                        write-host "Description: Посл. вход в УЗ: Никогда, УЗ создана: $Created" }
-                        $xMF_label_prBar.Content = "Обработано: $user"      
+                        Set-ADUser $user -Description "РџРѕСЃР». РІС…РѕРґ РІ РЈР—: ($lastlogon), РЈР— СЃРѕР·РґР°РЅР°: $Created"
+                        write-host "Description: РџРѕСЃР». РІС…РѕРґ РІ РЈР—:"($lastlogon)", РЈР— СЃРѕР·РґР°РЅР°: $Created"
+                        }else{Set-ADUser $user -Description "РџРѕСЃР». РІС…РѕРґ РІ РЈР—: РќРёРєРѕРіРґР°, РЈР— СЃРѕР·РґР°РЅР°: $Created"
+                        write-host "Description: РџРѕСЃР». РІС…РѕРґ РІ РЈР—: РќРёРєРѕРіРґР°, РЈР— СЃРѕР·РґР°РЅР°: $Created" }
+                        $xMF_label_prBar.Content = "РћР±СЂР°Р±РѕС‚Р°РЅРѕ: $user"      
                                
-                    }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка Description ->" $Error[0].Exception.Message
-                    $xMF_label_prBar.Content = "НЕ обработано: $user"}
+                    }catch{write-host -BackgroundColor red -ForegroundColor Yellow "РћС€РёР±РєР° Description ->" $Error[0].Exception.Message
+                    $xMF_label_prBar.Content = "РќР• РѕР±СЂР°Р±РѕС‚Р°РЅРѕ: $user"}
 
                     if ($xMF_inactive_cbox_delman.IsChecked -eq $true)
                     {
@@ -567,7 +645,7 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
             }
 
        
-}
+    }#if ($xMF_inactive_radio_disable.IsChecked -eq $true)
 }
 
 })
@@ -576,7 +654,7 @@ $xMF_inactive_btn_delstatus.add_click({
 
 if (!($xMF_lstv_inactive.Items.Count -eq 0))
 {
-    $ok = [System.Windows.Forms.MessageBox]::Show("Очистить записи со статусом Disabled?","Уведомление","OKCANCEL","Information")
+    $ok = [System.Windows.Forms.MessageBox]::Show("РћС‡РёСЃС‚РёС‚СЊ Р·Р°РїРёСЃРё СЃРѕ СЃС‚Р°С‚СѓСЃРѕРј Disabled?","РЈРІРµРґРѕРјР»РµРЅРёРµ","OKCANCEL","Information")
             if ($ok -eq "OK")
             {
             $item = 0
@@ -593,10 +671,10 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
                 }
             }
             $xMF_lstv_inactive.Items.Refresh()
-            $xMF_Inactive_button_clear.Content = "Всего записей: "+$xMF_lstv_inactive.items.count
+            $xMF_Inactive_button_clear.Content = "Р’СЃРµРіРѕ Р·Р°РїРёСЃРµР№: "+$xMF_lstv_inactive.items.count
             $xMF_label_prBar.Content = ""
             $xMF_prBar.Value = 0
             }
 
 }
-})
+}) 

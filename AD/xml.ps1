@@ -198,7 +198,7 @@
                                     <ContextMenu/>
                                 </ContextMenu.ContextMenu>
                                 <MenuItem x:Name="lstv_inactive_del" Header="Удалить из списка"/>
-                                <MenuItem x:Name="lstv_inactive_disable" Header="Отключить" Background="Red"/>
+                                <MenuItem x:Name="lstv_inactive_disable" Header="Отключить" Background="Red" Foreground="White"/>
                             </ContextMenu>
                         </ListView.ContextMenu>
                         <ListView.View>
@@ -206,13 +206,12 @@
                                 <GridViewColumn Header="Enabled" DisplayMemberBinding="{Binding Enabled}" Width="60"/>
                                 <GridViewColumn Header="DisplayName" DisplayMemberBinding="{Binding DisplayName}" Width="250"/>
                                 <GridViewColumn Header="SamAccountname" DisplayMemberBinding="{Binding SamAccountname}" Width="120"/>
-                                <GridViewColumn Header="LastLogonAD" DisplayMemberBinding="{Binding LastLogonAD}" Width="100"/>
-                                <GridViewColumn Header="LastLogonEX" DisplayMemberBinding="{Binding LastLogonEX}" Width="100"/>
-                                <GridViewColumn Header="Whencreated" DisplayMemberBinding="{Binding Whencreated}" Width="100"/>
+                                <GridViewColumn Header="LastLogonAD" DisplayMemberBinding="{Binding LastLogonAD}" Width="130"/>
+                                <GridViewColumn Header="LastLogonEX" DisplayMemberBinding="{Binding LastLogonEX}" Width="130"/>
+                                <GridViewColumn Header="Whencreated" DisplayMemberBinding="{Binding Whencreated}" Width="130"/>
                                 <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Description}" Width="150"/>
                                 <GridViewColumn Header="mail" DisplayMemberBinding="{Binding mail}" Width="150"/>
                                 <GridViewColumn Header="DistinguishedName" DisplayMemberBinding="{Binding DistinguishedName}" Width="300"/>
-                                <GridViewColumn Header="status" DisplayMemberBinding="{Binding status}" Width="50"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -241,11 +240,11 @@
                                         <ColumnDefinition Width="3*"/>
                                         <ColumnDefinition Width="2*"/>
                                     </Grid.ColumnDefinitions>
-                                    <RadioButton x:Name="inactive_rb_lastloggonad" Content="LastLogonAD" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,49.92,0,0" Grid.ColumnSpan="2"/>
-                                    <RadioButton x:Name="inactive_rb_displayname" Content="DisplayName" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,34.96,0,0" Grid.ColumnSpan="2"/>
-                                    <RadioButton x:Name="inactive_rb_lastlogonex" Content="LastLogonEX" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,64.88,0,0" Grid.ColumnSpan="2"/>
-                                    <RadioButton x:Name="inactive_rb_whencreated" Content="WhenCreated" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,79.84,0,0" Grid.ColumnSpan="2" IsChecked="True"/>
-                                    <Button x:Name="inactive_btn_sort" Content="Сортировка" HorizontalAlignment="Left" VerticalAlignment="Top" Width="112" Margin="10,10,0,0" Grid.ColumnSpan="2" />
+                                    <RadioButton x:Name="inactive_rb_lastloggonad" Content="LastLogonAD" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="21,24.92,0,0" Grid.ColumnSpan="2"/>
+                                    <RadioButton x:Name="inactive_rb_displayname" Content="DisplayName" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="21,9.96,0,0" Grid.ColumnSpan="2"/>
+                                    <RadioButton x:Name="inactive_rb_lastlogonex" Content="LastLogonEX" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="21,39.88,0,0" Grid.ColumnSpan="2"/>
+                                    <RadioButton x:Name="inactive_rb_whencreated" Content="WhenCreated" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="21,54.84,0,0" Grid.ColumnSpan="2" IsChecked="True"/>
+                                    <Button x:Name="inactive_btn_sort" Content="Сортировка" HorizontalAlignment="Left" VerticalAlignment="Top" Width="112" Margin="10,74.8,0,0" Grid.ColumnSpan="2" />
                                 </Grid>
                             </GroupBox>
                             <Button x:Name="inactive_btn_delstatus" Content="Удалить польз. со статусом" HorizontalAlignment="Left" VerticalAlignment="Top" Width="180" Margin="515,199.38,0,0" Height="24.203"/>
