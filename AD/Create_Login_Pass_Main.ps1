@@ -1321,6 +1321,10 @@ $xMF_lstv_menu_moveOU.add_click({
                 chkboxdeletegroups -user $User -exception "mdaemon"
             }
 
+            if (($xMF_chk_deletmanagermove.IsChecked -eq $True) -and ($complete -eq $true))
+            {
+                managers -user $User -empty $true -short $true
+            }
 
             $complete = $false
         }
