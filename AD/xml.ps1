@@ -217,13 +217,20 @@
                     </ListView>
                     <GroupBox Header="Функции" Height="252.5" VerticalAlignment="Top" Margin="10,5,10,0" BorderBrush="#FFA09F9F">
                         <Grid Margin="0,0,-2,-4.043">
+                            <ComboBox x:Name="inactive_cmbx_move" HorizontalAlignment="Left" VerticalAlignment="Top" Width="186" Margin="403,68.92,0,0">
+                                <ComboBoxItem Content="OU_RT"/>
+                                <ComboBoxItem Content="GBU"/>
+                                <ComboBoxItem Content="MO"/>
+                                <ComboBoxItem Content="ALL"/>
+                            </ComboBox>
                             <GroupBox HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="350" Margin="10,98.623,0,0" Header="Основное меню">
                                 <Grid HorizontalAlignment="Left" Height="79" Margin="0,0,-2,-1.96" VerticalAlignment="Top" Width="340">
+                                    <Button x:Name="Inactive_btn_cleardannie" Content="оч. Inactive" HorizontalAlignment="Left" VerticalAlignment="Top" Width="112" Margin="10,50.344,0,0"/>
                                     <CheckBox x:Name="inactive_cbox_delgr" Content="Удалить все группы" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="139,9.999,0,0"/>
                                     <CheckBox x:Name="inactive_cbox_dannie" Content="Очистить данные" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="139,50.196,0,0"/>
                                     <CheckBox x:Name="inactive_cbox_delman" Content="Удалить менеджеров" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="139,30.098,0,0"/>
-                                    <RadioButton x:Name="inactive_radio_disable" Content="Заблокировать" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,18.286,0,0" IsChecked="True"/>
-                                    <RadioButton x:Name="inactive_radio_move" Content="Перенести" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,38.246,0,0"/>
+                                    <RadioButton x:Name="inactive_radio_disable" Content="Заблокировать" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,9.999,0,0" IsChecked="True"/>
+                                    <RadioButton x:Name="inactive_radio_move" Content="Перенести" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,30.236,0,0"/>
                                 </Grid>
                             </GroupBox>
                             <Button x:Name="inactive_go" Content="В путь" HorizontalAlignment="Left" VerticalAlignment="Top" Width="152" Margin="515,113.583,0,0" Height="44.96"/>
@@ -250,6 +257,7 @@
                             <Button x:Name="inactive_btn_delstatus" Content="Удалить польз. со статусом" HorizontalAlignment="Left" VerticalAlignment="Top" Width="180" Margin="515,199.38,0,0" Height="24.203"/>
                             <TextBox x:Name="inactive_txtbox_filter" HorizontalAlignment="Left" Height="24.46" Margin="403,39.46,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="186"/>
                             <Label Content="Фильтр" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="352.96,38.96,0,0"/>
+                            <Label Content="Перенос" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="345.34,64.92,0,0"/>
                         </Grid>
                     </GroupBox>
                 </Grid>
