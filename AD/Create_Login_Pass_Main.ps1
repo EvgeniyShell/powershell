@@ -1224,6 +1224,7 @@ $message = [System.Windows.Forms.MessageBox]::Show("Пользователи с�
             if ($xMF_lstv_SingleUser.Items[$i].adcheck -eq "EXIST")
             {
                 $User = Get-ADUser -Identity $xMF_lstv_SingleUser.Items[$i].samaccountname
+                $login = $xMF_lstv_SingleUser.Items[$i].samaccountname
                 $UserDN = $User.distinguishedName
                 $TargetOU = $xMF_txtbox_OU_path.Text
                 $complete = $false
@@ -1248,8 +1249,12 @@ $message = [System.Windows.Forms.MessageBox]::Show("Пользователи с�
 
                     if (($user.Enabled -eq $False) -and ($complete -eq $true))
                     {
-                        Enable-ADAccount -Identity $UserDN
-                        write-host УЗ -> $xMF_lstv_SingleUser.Items[$i].displayname включена
+                        Try
+                        {
+                            Enable-ADAccount -Identity $login
+                            write-host УЗ -> Пользователя $xMF_lstv_SingleUser.Items[$i].displayname включена
+                        }catch
+                        {write-host -BackgroundColor Red -ForegroundColor White УЗ -> Пользователя $xMF_lstv_SingleUser.Items[$i].displayname НЕ включена}
                     }
 
                     if (($xMF_chk_deletgroupsmove.IsChecked -eq $True) -and ($complete -eq $true))
@@ -1285,6 +1290,7 @@ $xMF_lstv_menu_moveOU.add_click({
    if ($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].adcheck -eq "EXIST")
    {
         $User = Get-ADUser -Identity $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].samaccountname
+        $login = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].samaccountname
         $UserDN = $User.distinguishedName
         $TargetOU = $xMF_txtbox_OU_path.Text
         $complete = $false
@@ -1312,8 +1318,12 @@ $xMF_lstv_menu_moveOU.add_click({
 
             if (($user.Enabled -eq $False) -and ($complete -eq $true))
             {
-                Enable-ADAccount -Identity $UserDN
+                Try
+                {
+                Enable-ADAccount -Identity $login
                 write-host УЗ -> Пользователя $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].displayname включена
+                }catch
+                {write-host -BackgroundColor Red -ForegroundColor White УЗ -> Пользователя $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].displayname НЕ включена}
             }
 
             if (($xMF_chk_deletgroupsmove.IsChecked -eq $True) -and ($complete -eq $true))

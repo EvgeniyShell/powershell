@@ -212,6 +212,7 @@
                                 <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Description}" Width="150"/>
                                 <GridViewColumn Header="mail" DisplayMemberBinding="{Binding mail}" Width="150"/>
                                 <GridViewColumn Header="DistinguishedName" DisplayMemberBinding="{Binding DistinguishedName}" Width="300"/>
+                                <GridViewColumn Header="status" DisplayMemberBinding="{Binding status}" Width="100"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
