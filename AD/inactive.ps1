@@ -116,6 +116,8 @@ function testconnection
         }
     }else
     {
+        $xMF_inactive_exch_btn.Content = "Статус: не подключено"
+        $xMF_inactive_exch_btn.Background = "red"
         return "off"
     }
 }
@@ -131,7 +133,7 @@ function exch_connect
         $statusconnect = "OK"
     }catch
     {
-        write-host -BackgroundColor Red -ForegroundColor Yellow "Подключение не к Exchange удалось: ->" $error[0].Exception.Message
+        write-host -BackgroundColor Red -ForegroundColor Yellow "Подключение к Exchange не удалось: ->" $error[0].Exception.Message
     }
     if ($statusconnect -eq "OK")
     {
@@ -698,23 +700,23 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
     $ok = [System.Windows.Forms.MessageBox]::Show("Очистить записи со статусом Disabled?","Уведомление","OKCANCEL","Information")
             if ($ok -eq "OK")
             {
-            $item = 0
-            $icount = $xMF_lstv_inactive.Items.Count
-            while ($item -lt $icount)
-            {
-                if ($xMF_lstv_inactive.Items[$item].status -eq "disabled")
+                $item = 0
+                $icount = $xMF_lstv_inactive.Items.Count
+                while ($item -lt $icount)
                 {
-                    $xMF_lstv_inactive.Items.Remove($xMF_lstv_inactive.items[$item])
+                    if ($xMF_lstv_inactive.Items[$item].status -eq "disabled")
+                    {
+                        $xMF_lstv_inactive.Items.Remove($xMF_lstv_inactive.items[$item])
+                    }
+                    else
+                    {
+                        $item++
+                    }
                 }
-                else
-                {
-                    $item++
-                }
-            }
-            $xMF_lstv_inactive.Items.Refresh()
-            $xMF_Inactive_button_clear.Content = "Всего записей: "+$xMF_lstv_inactive.items.count
-            $xMF_label_prBar.Content = ""
-            $xMF_prBar.Value = 0
+                $xMF_lstv_inactive.Items.Refresh()
+                $xMF_Inactive_button_clear.Content = "Всего записей: "+$xMF_lstv_inactive.items.count
+                $xMF_label_prBar.Content = ""
+                $xMF_prBar.Value = 0
             }
 
 }

@@ -538,7 +538,7 @@ if (!($xMF_lstv_SingleUser.SelectedIndex -eq -1)){
         #Пока количество выделеных записей больше нуля, удалять записи
         while ($count -gt 0)
         {
-            $xMF_lstv_SingleUser.Items.Remove($xMF_lstv_inactive.SelectedItem)
+            $xMF_lstv_SingleUser.Items.Remove($xMF_lstv_SingleUser.SelectedItem)
             $count = $xMF_lstv_SingleUser.SelectedItems.Count
         }
     }
