@@ -2,9 +2,9 @@
 $xMF_inactive_txtbox_ou.Text = "OU=OU_RT,DC=ASO,DC=RT,DC=LOCAL"
 $xMF_inactive_months.Text = "6"
 $global:sortcheck = $true
+$xMF_inactive_txtbox_filter_Descr.Text = "декрет,общий"
 
-
-
+#Функция для сортировки
 function sortirovka ($sort ="WhenCreated")
 {
     
@@ -123,7 +123,9 @@ function testconnection
 }
 
 
-
+#
+# Функция подключения к Exchange
+#
 function exch_connect
 {
     $statusconnect = "False"
@@ -157,6 +159,9 @@ function empty ($source)
 
 }
 
+#
+# Основная функция загрузки данных в ListView
+#
 function inactive ($enabled = "all")
 {
 $inactives = ""
@@ -192,6 +197,16 @@ if ($connection -eq "on")
                 {
                 [string]$list2 = $list[$j]
                 $inactives = $inactives | ?{!($_.DistinguishedName -like "*$list2*")}
+                }
+            }
+
+            if (!($xMF_inactive_txtbox_filter_Descr.Text.Length -eq 0))
+            {
+                [array]$list = $xMF_inactive_txtbox_filter_Descr.Text -split ","
+                for ($j=0 ;$j -ne $list.Count ; $j++)
+                {
+                [string]$list2 = $list[$j]
+                $inactives = $inactives | ?{!($_.Description -like "*$list2*")}
                 }
             }
 
@@ -432,7 +447,7 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
         for ($i=0 ;$i -ne $xMF_lstv_inactive.Items.Count;  $i++)
         {
             $complete = $False
-            if (($xMF_lstv_inactive.Items[$i].Enabled -eq "True") -and !($xMF_lstv_inactive.Items[$i].status -eq "disabled"))
+            if (($xMF_lstv_inactive.Items[$i].Enabled -eq $True) -and !($xMF_lstv_inactive.Items[$i].status -eq "disabled"))
             {
                 Write-Host "----------------------" $xMF_lstv_inactive.Items[$i].SamAccountname "--------------------------------"
                 $user = $xMF_lstv_inactive.Items[$i].SamAccountname
@@ -524,7 +539,7 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
         for ($i=0 ;$i -ne $xMF_lstv_inactive.Items.Count;  $i++)
         {
             $complete = $False
-            if (($xMF_lstv_inactive.Items[$i].Enabled -eq "False"))
+            if (($xMF_lstv_inactive.Items[$i].Enabled -eq $False))
             {
                 $user = $xMF_lstv_inactive.Items[$i].SamAccountname
                 Write-Host "----------------------" $xMF_lstv_inactive.Items[$i].SamAccountname "--------------------------------"
