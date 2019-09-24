@@ -1803,8 +1803,8 @@ if (!($global:domstruct -eq $null))
     $clearOU = [System.Windows.Forms.MessageBox]::Show("Сбросить OU список?","Уведомление","OKCANCEL","Information")
     if ($clearOU -eq "OK")
     {
-        $global:domstruct = $null
         $treeviewOUs.Items.Clear()
+        $global:domstruct = $null
         
     }
 }
