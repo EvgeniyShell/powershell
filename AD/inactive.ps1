@@ -656,7 +656,7 @@ $xMF_Inactive_btn_cleardannie.add_click({
 #
 $xMF_lstv_inactive_move.add_click({
         
-if ($xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].Enabled -eq "False")
+if ($xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].Enabled -eq $False)
 {
     $ok = [System.Windows.Forms.MessageBox]::Show("Обработать (Перенос) пользователя?","Уведомление","OKCANCEL","information")
         if ($ok -eq "OK")
