@@ -198,6 +198,7 @@
                                     <ContextMenu/>
                                 </ContextMenu.ContextMenu>
                                 <MenuItem x:Name="lstv_inactive_del" Header="Удалить из списка"/>
+                                <MenuItem x:Name="lstv_inactive_move" Header="Перенести в Inactive"/>
                                 <MenuItem x:Name="lstv_inactive_disable" Header="Отключить" Background="Red" Foreground="White"/>
                             </ContextMenu>
                         </ListView.ContextMenu>

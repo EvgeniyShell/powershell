@@ -464,12 +464,13 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
                     try
                     {
                         $lastlogon = $xMF_lstv_inactive.Items[$i].LastLogonAd
+                        $lastlogonEX = $xMF_lstv_inactive.Items[$i].LastLogonEX
                         $Created = $xMF_lstv_inactive.Items[$i].Whencreated
                         if (!($lastlogon -eq "") -and !($lastlogon -eq $null)){
-                        Set-ADUser $user -Description "Посл. вход в УЗ: $lastlogon, УЗ создана: $Created"
-                        write-host "Description: Посл. вход в УЗ: $lastlogon, УЗ создана: $Created"
-                        }else{Set-ADUser $user -Description "Посл. вход в УЗ: Никогда, УЗ создана: $Created"
-                        write-host "Description: Посл. вход в УЗ: Никогда, УЗ создана: $Created" }
+                        Set-ADUser $user -Description "Посл. вход в УЗ: $lastlogon, УЗ создана: $Created, Почта: $lastlogonEX"
+                        write-host "Description: Посл. вход в УЗ: $lastlogon, УЗ создана: $Created, Почта: $lastlogonEX"
+                        }else{Set-ADUser $user -Description "Посл. вход в УЗ: Никогда, УЗ создана: $Created, Почта: $lastlogonEX"
+                        write-host "Description: Посл. вход в УЗ: Никогда, УЗ создана: $Created, Почта: $lastlogonEX" }
                         $count++
 
                     }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка Description ->" $Error[0].Exception.Message
@@ -650,6 +651,72 @@ $xMF_Inactive_btn_cleardannie.add_click({
 })
 
 
+#
+# Кнопка переноса пользователя в Inactive через МЕНЮ в LISTVIEW INACTIVE
+#
+$xMF_lstv_inactive_move.add_click({
+        
+if ($xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].Enabled -eq "False")
+{
+    $ok = [System.Windows.Forms.MessageBox]::Show("Обработать (Перенос) пользователя?","Уведомление","OKCANCEL","information")
+        if ($ok -eq "OK")
+        {
+
+                $user = $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].SamAccountname
+                Write-Host "----------------------" $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].SamAccountname "--------------------------------"
+
+                if ($xMF_inactive_cbox_dannie.IsChecked -eq $true)
+                {
+                    try
+                    {
+                        Set-ADUser $user -Office $null -OfficePhone $null -Department $null -Title $null -City $null -StreetAddress $null -PostalCode $null -Country $null -Company $null
+                        write-host "Данные у пользователя очищены:" $user
+                    }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка очистки ->" $Error[0].Exception.Message}
+                }
+
+                if ($xMF_inactive_cbox_delman.IsChecked -eq $true)
+                {
+                    managers -user $user -empty $true -short $true
+                }
+
+                if ($xMF_inactive_cbox_delgr.IsChecked -eq $true)
+                {
+                    chkboxdeletegroups -user $user -exception "mdaemon"
+                }
+
+                try
+                {
+                    $TargetOU = "OU=Users,OU=Inactive,DC=ASO,DC=RT,DC=LOCAL"
+                    switch ($xMF_inactive_cmbx_move.items[$xMF_inactive_cmbx_move.SelectedIndex].Content)
+                    {
+                        'OU_RT' {$TargetOU = "OU=OU_RT,OU=Users,OU=Inactive,DC=ASO,DC=RT,DC=LOCAL"}
+                        'GBU' {$TargetOU = "OU=GBU,OU=Users,OU=Inactive,DC=ASO,DC=RT,DC=LOCAL"}
+                        'MO' {$TargetOU = "OU=MO,OU=Users,OU=Inactive,DC=ASO,DC=RT,DC=LOCAL"}
+                        'ALL' {$TargetOU = "OU=Users,OU=Inactive,DC=ASO,DC=RT,DC=LOCAL"}
+                    }
+                                        
+                    $userdn = $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].distinguishedName
+                    Move-ADObject -Identity $userdn -TargetPath $TargetOU
+                    Write-Host "Пользователь перенесен: $user"
+                    $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].status = "Moved"
+                }catch
+                {
+                    write-host "Перенос - " $Error[0].Exception
+                    $counterr++
+                }
+
+                $xMF_label_prBar.Content = "Пользователь перенесен: $user"
+                $Form_Main.Dispatcher.Invoke([action]{},"Render")
+
+    } # $ok
+} # if ($xMF_lstv_inactive.Items[$xMF_inactive_cmbx_move.SelectedIndex].Enabled -eq "False")
+
+})
+
+
+#
+# Кнопка отключения пользователя через МЕНЮ в LISTVIEW INACTIVE
+#
 $xMF_lstv_inactive_disable.add_click({
 
 
