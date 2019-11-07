@@ -16,26 +16,25 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Button Content="Button" HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="0"/>
-                    <Button x:Name="btn_clearsingle" Content="Очистить списки" HorizontalAlignment="Left" Margin="11.333,359.46,0,0" Width="232.5" Height="30.46" VerticalAlignment="Top"/>
+                    <Button x:Name="btn_clearsingle" Content="Очистить списки" HorizontalAlignment="Left" Margin="11.333,359.46,0,0" Width="232.5" Height="30.46" VerticalAlignment="Top" ToolTip="Очистка списков"/>
                     <ListView x:Name="lstv_SingleUser" Margin="10,10,8.5,0" Height="295" VerticalAlignment="Top" AlternationCount="2">
                         <ListView.ContextMenu>
                             <ContextMenu>
                                 <ContextMenu.ContextMenu>
                                     <ContextMenu/>
                                 </ContextMenu.ContextMenu>
-                                <MenuItem x:Name="lstv_Menu_paste" Header="Вставить"/>
-                                <MenuItem x:Name="lstv_Menu_check_ad" Header="Проверить в АД"/>
-                                <MenuItem x:Name="lstv_Menu_add_ad" Header="Добавить в АД"/>
-                                <MenuItem x:Name="lstv_menu_changeAD" Header="Изменить данные в АД" Background="#FF8ABF39"/>
-                                <MenuItem x:Name="lstv_menu_moveOU" Header="Перенести пользователя в OU"/>
-                                <MenuItem x:Name="lstv_menu_change" Header="Изменить"/>
-                                <MenuItem x:Name="lstv_menu_changePASS" Header="Изменить ПАРОЛЬ"/>
-                                <MenuItem x:Name="lstv_Menu_Pass" Header="Новый пароль"/>
-                                <MenuItem x:Name="lstv_Menu_status" Header="Сменить статус на ОБЩАЯ УЗ"/>
-                                <MenuItem x:Name="lstv_Menu_copy2bufer" Header="Копировать в буфер"/>
-                                <MenuItem x:Name="lstv_Menu_Clear" Header="Очистить"/>
-                                <MenuItem x:Name="lstv_Menu_delete" Header="Удалить"/>
+                                <MenuItem x:Name="lstv_Menu_paste" Header="Вставить" ToolTip="Вставить пользователей из буфера обмена"/>
+                                <MenuItem x:Name="lstv_Menu_check_ad" Header="Проверить в АД" ToolTip="Проверить выделенного пользователя в АД"/>
+                                <MenuItem x:Name="lstv_Menu_add_ad" Header="Добавить в АД" ToolTip="Добавить выделенного пользователя в АД"/>
+                                <MenuItem x:Name="lstv_menu_changeAD" Header="Изменить данные в АД" Background="#FF8ABF39" ToolTip="Изменить данные пользователя на данные из списка"/>
+                                <MenuItem x:Name="lstv_menu_moveOU" Header="Перенести пользователя в OU" ToolTip="Перенесети выделнного пользователя в OU"/>
+                                <MenuItem x:Name="lstv_menu_change" Header="Изменить" ToolTip="Изменить данные выделенного пользователя через дополнительное окно"/>
+                                <MenuItem x:Name="lstv_menu_changePASS" Header="Изменить ПАРОЛЬ" ToolTip="Изменить пароль пользователя на сгенерированый"/>
+                                <MenuItem x:Name="lstv_Menu_Pass" Header="Новый пароль" ToolTip="Сгенерировать новый пароль выделенному пользователю"/>
+                                <MenuItem x:Name="lstv_Menu_status" Header="Сменить статус на ОБЩАЯ УЗ" ToolTip="Поменять статус если учетная запись должна быть общей (Ящик приемной и т.д.)"/>
+                                <MenuItem x:Name="lstv_Menu_copy2bufer" Header="Копировать в буфер" ToolTip="Скопировать данные выделенного пользователя в буфер обмена"/>
+                                <MenuItem x:Name="lstv_Menu_Clear" Header="Очистить" ToolTip="Очистить список"/>
+                                <MenuItem x:Name="lstv_Menu_delete" Header="Удалить" ToolTip="Удалить выделенного пользователя из списка"/>
                             </ContextMenu>
                         </ListView.ContextMenu>
                         <ListView.View>
@@ -72,19 +71,19 @@
                             </GridView>
                         </ListView.View>
                     </ListView>
-                    <Button x:Name="btn_AddSingle" Content="Добавить из буфера в ListView (_V)" Margin="11.333,324,0,0" HorizontalAlignment="Left" Width="232.5" Height="30.46" VerticalAlignment="Top"/>
+                    <Button x:Name="btn_AddSingle" Content="Добавить из буфера в ListView (_V)" Margin="11.333,324,0,0" HorizontalAlignment="Left" Width="232.5" Height="30.46" VerticalAlignment="Top" ToolTip="Вставить пользователей из буфера обмена (V)"/>
                     <ListView x:Name="lstv_SingleUser_Exist" Margin="11.333,409.5,7.167,10.5">
                         <ListView.ContextMenu>
                             <ContextMenu>
                                 <ContextMenu.ContextMenu>
                                     <ContextMenu/>
                                 </ContextMenu.ContextMenu>
-                                <MenuItem x:Name="lstvExist_Menu_copy2bufer" Header="Копировать в буфер"/>
-                                <MenuItem x:Name="lstvExist_Menu_Disable" Header="Отключить пользователя"/>
-                                <MenuItem x:Name="lstvExist_Menu_Clear" Header="Очистить"/>
-                                <MenuItem x:Name="lstvExist_Menu_deletemanager" Header="Удалить менеджера у пользователя"/>
-                                <MenuItem x:Name="lstvExist_Menu_deletegroup" Header="Удалить группы у пользователя"/>
-                                <MenuItem x:Name="lstvExist_Menu_delete" Header="Удалить"/>
+                                <MenuItem x:Name="lstvExist_Menu_copy2bufer" Header="Копировать в буфер" ToolTip="Копировать данные пользователя в буфер обмена"/>
+                                <MenuItem x:Name="lstvExist_Menu_Disable" Header="Отключить пользователя" ToolTip="Отключить выделенного пользователя"/>
+                                <MenuItem x:Name="lstvExist_Menu_Clear" Header="Очистить" ToolTip="Очистить список"/>
+                                <MenuItem x:Name="lstvExist_Menu_deletemanager" Header="Удалить менеджера у пользователя" ToolTip="Удалить менеджера у пользователя"/>
+                                <MenuItem x:Name="lstvExist_Menu_deletegroup" Header="Удалить группы у пользователя" ToolTip="Удалить все группы у пользователя"/>
+                                <MenuItem x:Name="lstvExist_Menu_delete" Header="Удалить" ToolTip="Удалить пользователя из списка"/>
                             </ContextMenu>
                         </ListView.ContextMenu>
                         <ListView.View>

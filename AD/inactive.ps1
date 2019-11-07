@@ -656,7 +656,7 @@ $xMF_Inactive_btn_cleardannie.add_click({
 #
 $xMF_lstv_inactive_move.add_click({
         
-if ($xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].Enabled -eq $False)
+if (($xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].Enabled -eq $False) -and !($xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].status -eq "Moved"))
 {
     $ok = [System.Windows.Forms.MessageBox]::Show("Обработать (Перенос) пользователя?","Уведомление","OKCANCEL","information")
         if ($ok -eq "OK")
@@ -706,7 +706,7 @@ if ($xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].Enabled -eq $Fals
                 }
 
                 $xMF_label_prBar.Content = "Пользователь перенесен: $user"
-                $Form_Main.Dispatcher.Invoke([action]{},"Render")
+                $xMF_lstv_inactive.Items.Refresh()
 
     } # $ok
 } # if ($xMF_lstv_inactive.Items[$xMF_inactive_cmbx_move.SelectedIndex].Enabled -eq "False")
@@ -743,12 +743,13 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
                     try
                     {
                         $lastlogon = $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].LastLogonAd
+                        $lastlogonEX = $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].LastLogonEX
                         $Created = $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].Whencreated
                         if (!($lastlogon -eq "") -and !($lastlogon -eq $null)){
-                        Set-ADUser $user -Description "Посл. вход в УЗ: $lastlogon, УЗ создана: $Created"
-                        write-host "Description: Посл. вход в УЗ: $lastlogon, УЗ создана: $Created"
-                        }else{Set-ADUser $user -Description "Посл. вход в УЗ: Никогда, УЗ создана: $Created"
-                        write-host "Description: Посл. вход в УЗ: Никогда, УЗ создана: $Created" }
+                        Set-ADUser $user -Description "Посл. вход в УЗ: $lastlogon, УЗ создана: $Created, Почта: $lastlogonEX"
+                        write-host "Description: Посл. вход в УЗ: $lastlogon, УЗ создана: $Created, Почта: $lastlogonEX"
+                        }else{Set-ADUser $user -Description "Посл. вход в УЗ: Никогда, УЗ создана: $Created, Почта: $lastlogonEX"
+                        write-host "Description: Посл. вход в УЗ: Никогда, УЗ создана: $Created, Почта: $lastlogonEX" }
                         $xMF_label_prBar.Content = "Обработано: $user"      
                                
                     }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка Description ->" $Error[0].Exception.Message
