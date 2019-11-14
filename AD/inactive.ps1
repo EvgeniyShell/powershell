@@ -4,6 +4,24 @@ $xMF_inactive_months.Text = "6"
 $global:sortcheck = $true
 $xMF_inactive_txtbox_filter_Descr.Text = "декрет,общий"
 
+
+###############################################################################
+# Действия по сортировке Listview
+###############################################################################
+
+[Windows.RoutedEventHandler]$evt2 = 	{
+	$view1 = [System.Windows.Data.CollectionViewSource]::GetDefaultView($xMF_lstv_inactive.Items)
+	$sort1 = $view1.SortDescriptions[0].Direction
+	$direction1 = if($sort1 -and 'Descending' -eq $sort1){'Ascending'}else{'Descending'}
+	$view1.SortDescriptions.Clear()
+	$sortDescription1 = New-Object System.ComponentModel.SortDescription($_.OriginalSource.Column.Header, $direction1)
+	$view1.SortDescriptions.Add($sortDescription1)
+}
+
+    $xMF_lstv_inactive.AddHandler([System.Windows.Controls.GridViewColumnHeader]::ClickEvent, $evt2)
+
+
+
 #Функция для сортировки
 function sortirovka ($sort ="WhenCreated")
 {
@@ -107,11 +125,13 @@ function testconnection
         {
             $xMF_inactive_exch_btn.Content = "Статус: подключено"
             $xMF_inactive_exch_btn.Background = "green"
+            $xMF_menuitem_exchange.Background = "green"
             return "on"
         }elseif ($global:Session.State -eq "Closed")
         {
             $xMF_inactive_exch_btn.Content = "Статус: не подключено"
             $xMF_inactive_exch_btn.Background = "red"
+            $xMF_menuitem_exchange.Background = "red"
             return "off"
         }
     }else
@@ -359,7 +379,7 @@ if ($xMF_inactive_months.Text[0] -notmatch "[0-9]")
 {
     if ($xMF_inactive_months.Text[1] -notmatch "[0-9]")
     {
-        $xMF_inactive_months.Text = ""
+        $xMF_inactive_months.Text = $xMF_inactive_months.Text[0]
     }
 }
 
@@ -736,7 +756,8 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
                     Disable-ADAccount -Identity $user
                     write-host "Пользователь отключен:" $user
                     $complete = $True
-                }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка отключения ->" $Error[0].Exception.Message}
+                }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка отключения ->" $Error[0].Exception.Message
+                [System.Windows.Forms.MessageBox]::Show("Ошибка отключения УЗ - "+$user,"Уведомление","OK","information")}
 
                 if ($complete -eq $True)
                 {
@@ -750,23 +771,34 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
                         write-host "Description: Посл. вход в УЗ: $lastlogon, УЗ создана: $Created, Почта: $lastlogonEX"
                         }else{Set-ADUser $user -Description "Посл. вход в УЗ: Никогда, УЗ создана: $Created, Почта: $lastlogonEX"
                         write-host "Description: Посл. вход в УЗ: Никогда, УЗ создана: $Created, Почта: $lastlogonEX" }
+                        $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].status = "disabled"
+                        $xMF_lstv_inactive.Items.Refresh()
                         $xMF_label_prBar.Content = "Обработано: $user"      
                                
                     }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка Description ->" $Error[0].Exception.Message
-                    $xMF_label_prBar.Content = "НЕ обработано: $user"}
+                    $xMF_label_prBar.Content = "НЕ обработано: $user"
+                    [System.Windows.Forms.MessageBox]::Show("Ошибка в прописывании Description у "+$user,"Уведомление","OK","information")}
 
-                    if ($xMF_inactive_cbox_delman.IsChecked -eq $true)
+                    if ((($xMF_inactive_cbox_delman.IsChecked -eq $true) -and ($complete -eq $True)) -or (($xMF_inactive_cbox_delgr.IsChecked -eq $true) -and ($complete -eq $True)))
                     {
-                        managers -user $user -empty $true -short $true
-                    }
+                        $ok = [System.Windows.Forms.MessageBox]::Show("Одно из свойств выбрано`nМенеджеры - "+$xMF_inactive_cbox_delman.IsChecked+"`nГруппы - "+$xMF_inactive_cbox_delgr.IsChecked+"`nПродолжить?","Уведомление","OKCANCEL","information")
 
-                    if ($xMF_inactive_cbox_delgr.IsChecked -eq $true)
-                    {
-                        chkboxdeletegroups -user $user -exception "mdaemon"
-                    }
+                        if ($ok -eq "OK")
+                        {
+                            if (($xMF_inactive_cbox_delman.IsChecked -eq $true) -and ($complete -eq $True))
+                            {
+                                managers -user $user -empty $true -short $true
+                            }
 
-                    $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].status = "disabled"
-                    $xMF_lstv_inactive.Items.Refresh()
+                            if (($xMF_inactive_cbox_delgr.IsChecked -eq $true) -and ($complete -eq $True))
+                            {
+                                chkboxdeletegroups -user $user -exception "mdaemon"
+                            }
+
+                        }#($ok -eq "OK")
+                    }#if ((($xMF_inactive_cbox_delman.IsChecked -eq $true) -and ($complete -eq $True)) -or (($xMF_inactive_cbox_delgr.IsChecked -eq $true) -and ($complete -eq $True)))
+
+                    
                 }
             }
 

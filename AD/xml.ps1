@@ -296,6 +296,7 @@
                 <CheckBox x:Name="chk_deletgroupsmove" Content="Удалять группы при переносе" IsChecked="False"/>
                 <CheckBox x:Name="chk_hideshow" Content="Спрятать консоль" IsChecked="True"/>
             </MenuItem>
+            <MenuItem x:Name="menuitem_exchange" Header="Exchange" Background="Red" Visibility="Hidden" Foreground="White"/>
         </Menu>
         <ProgressBar x:Name="prBar" Margin="10,0,10,10" Background="#FFE6E6E6" RenderTransformOrigin="0,0" Height="14.499" VerticalAlignment="Bottom"/>
         <Label x:Name="label_prBar" Content="" Margin="10,0" FontSize="10" Height="29.499" VerticalAlignment="Bottom"/>

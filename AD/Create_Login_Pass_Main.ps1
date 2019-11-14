@@ -13,6 +13,8 @@ $ScriptPath = Split-Path $MyInvocation.MyCommand.Path
 
 #Import-Module RemoteAD
 
+# XAML
+. $ScriptPath\xml.ps1
 # Функция для генерации пароля
 . $ScriptPath\New-Password.ps1
 # Функция для загрузки списка OU из АД
@@ -27,8 +29,6 @@ $ScriptPath = Split-Path $MyInvocation.MyCommand.Path
 . $ScriptPath\find_user.ps1
 # Добавление пользователей из списка в АД
 . $ScriptPath\add_user_ad
-# XAML
-. $ScriptPath\xml.ps1
 # Функции для работы с группами
 . $ScriptPath\groups.ps1
 # Функции для работы с inactive
@@ -44,9 +44,42 @@ $xMF_textbox_Group_newuser.Text=""
 $xMF_textbox_Group_existuser.Text=""
 $global:checklog = 0
 $global:firstrun = 1
-$global:Session = ""
 
-testconnection
+if ((Get-Variable -Name Session -ErrorAction Ignore) -eq $null)
+{
+   $global:Session = ""
+}
+
+testconnection | Out-Null
+
+################################################################################
+# Проверка существования файла с кодом, для активации функционала Exchange
+################################################################################
+
+if (Test-Path $ScriptPath\exchange.ps1)
+{
+    if ((Get-Content $ScriptPath\exchange.ps1 -TotalCount 1) -like "*Exchange*script*")
+    {
+        $Xmf_menuitem_exchange.Visibility = "visible"
+        . $ScriptPath\exchange.ps1
+    }
+
+}
+
+###############################################################################
+# Действия по сортировке Listview
+###############################################################################
+
+[Windows.RoutedEventHandler]$evt = 	{
+	$view = [System.Windows.Data.CollectionViewSource]::GetDefaultView($xMF_lstv_SingleUser.Items)
+	$sort = $view.SortDescriptions[0].Direction
+	$direction = if($sort -and 'Descending' -eq $sort){'Ascending'}else{'Descending'}
+	$view.SortDescriptions.Clear()
+	$sortDescription = New-Object System.ComponentModel.SortDescription($_.OriginalSource.Column.Header, $direction)
+	$view.SortDescriptions.Add($sortDescription)
+}
+    $xMF_lstv_SingleUser.AddHandler([System.Windows.Controls.GridViewColumnHeader]::ClickEvent, $evt)
+
 
 ###############################################################################
 #Функции для проверки данных
@@ -830,7 +863,7 @@ if (!($xMF_lstv_SingleUser.SelectedIndex -eq -1))
     $item2 = $xmf_lstv_SingleUser.Items[$xmf_lstv_SingleUser.SelectedIndex].SamAccountName
     $item3 = $xmf_lstv_SingleUser.Items[$xmf_lstv_SingleUser.SelectedIndex].Pass
     [Windows.Clipboard]::Clear()
-    [Windows.Clipboard]::SetDataObject("$item	$item2	$item3")
+    [Windows.Clipboard]::SetDataObject("$item`n$item2`n$item3")
     $xMF_label_prBar.Content = "Данные пользователя $item скопированы в буфер обмена"
     Write-Host "Данные пользователя $item скопированы в буфер обмена"
 }
@@ -843,7 +876,7 @@ if (!($xMF_lstv_SingleUser.SelectedIndex -eq -1))
     $item2 = $xmf_lstv_SingleUser.Items[$xmf_lstv_SingleUser.SelectedIndex].SamAccountName
     $item3 = $xmf_lstv_SingleUser.Items[$xmf_lstv_SingleUser.SelectedIndex].Pass
     [Windows.Clipboard]::Clear()
-    [Windows.Clipboard]::SetDataObject("$item	$item2	$item3")
+    [Windows.Clipboard]::SetDataObject("$item`n$item2`n$item3")
     $xMF_label_prBar.Content = "Данные пользователя $item скопированы в буфер обмена"
     Write-Host "Данные пользователя $item скопированы в буфер обмена"
 }
@@ -858,7 +891,7 @@ if (!($xMF_lstv_SingleUser_Exist.SelectedIndex -eq -1))
     $item4 = $xMF_lstv_SingleUser_Exist.Items[$xMF_lstv_SingleUser_Exist.SelectedIndex].Department
     $item5 = $xMF_lstv_SingleUser_Exist.Items[$xMF_lstv_SingleUser_Exist.SelectedIndex].Company
     [Windows.Clipboard]::Clear()
-    [Windows.Clipboard]::SetDataObject("$item	$item3	$item4	$item5	$item2")
+    [Windows.Clipboard]::SetDataObject("$item`n$item3`n$item4`n$item5`n$item2")
     $xMF_label_prBar.Content = "Данные существующего пользователя $item скопированы в буфер обмена"
     Write-Host "Данные существующего пользователя $item скопированы в буфер обмена"
 }
@@ -873,7 +906,7 @@ if (!($xMF_lstv_SingleUser_Exist.SelectedIndex -eq -1))
     $item4 = $xMF_lstv_SingleUser_Exist.Items[$xMF_lstv_SingleUser_Exist.SelectedIndex].Department
     $item5 = $xMF_lstv_SingleUser_Exist.Items[$xMF_lstv_SingleUser_Exist.SelectedIndex].Company
     [Windows.Clipboard]::Clear()
-    [Windows.Clipboard]::SetDataObject("$item	$item3	$item4	$item5	$item2")
+    [Windows.Clipboard]::SetDataObject("$item`n$item3`n$item4`n$item5`n$item2")
     $xMF_label_prBar.Content = "Данные существующего пользователя $item скопированы в буфер обмена"
     Write-Host "Данные существующего пользователя $item скопированы в буфер обмена"
 }
@@ -1612,8 +1645,24 @@ $xMF_group_btn_right.add_click({
     }
     else
     {
-        $xMF_groups_lstv_user2.Items.Add($xMF_groups_lstv_user1.Items[$xMF_groups_lstv_user1.SelectedIndex])
-        $xMF_groups_lstv_user1.Items.Remove($xMF_groups_lstv_user1.SelectedItem)
+        if (!($xMF_groups_lstv_user1.SelectedIndex -eq "-1"))
+        {
+            if ($xMF_groups_lstv_user1.SelectedItems.Count -gt "1")
+            {
+                
+                for($i=$xMF_groups_lstv_user1.SelectedItems.Count-1;$i -ne -1;$i--)
+                {
+                    $xMF_groups_lstv_user2.Items.Add($xMF_groups_lstv_user1.SelectedItems[$i])
+                    $xMF_groups_lstv_user1.Items.Remove($xMF_groups_lstv_user1.SelectedItems[$i])
+                }
+
+            }
+            else
+            {
+                $xMF_groups_lstv_user2.Items.Add($xMF_groups_lstv_user1.Items[$xMF_groups_lstv_user1.SelectedIndex])
+                $xMF_groups_lstv_user1.Items.Remove($xMF_groups_lstv_user1.SelectedItem)
+            }
+        }
     }
 
 })
@@ -1625,8 +1674,24 @@ $xMF_group_right.add_click({
     }
     else
     {
-        $xMF_groups_lstv_user2.Items.Add($xMF_groups_lstv_user1.Items[$xMF_groups_lstv_user1.SelectedIndex])
-        $xMF_groups_lstv_user1.Items.Remove($xMF_groups_lstv_user1.SelectedItem)
+        if (!($xMF_groups_lstv_user1.SelectedIndex -eq "-1"))
+        {
+            if ($xMF_groups_lstv_user1.SelectedItems.Count -gt "1")
+            {
+                
+                for($i=$xMF_groups_lstv_user1.SelectedItems.Count-1;$i -ne -1;$i--)
+                {
+                    $xMF_groups_lstv_user2.Items.Add($xMF_groups_lstv_user1.SelectedItems[$i])
+                    $xMF_groups_lstv_user1.Items.Remove($xMF_groups_lstv_user1.SelectedItems[$i])
+                }
+
+            }
+            else
+            {
+                $xMF_groups_lstv_user2.Items.Add($xMF_groups_lstv_user1.Items[$xMF_groups_lstv_user1.SelectedIndex])
+                $xMF_groups_lstv_user1.Items.Remove($xMF_groups_lstv_user1.SelectedItem)
+            }
+        }
     }
 })
 
@@ -1637,8 +1702,24 @@ $xMF_group_left.add_click({
     }
     else
     {
-        $xMF_groups_lstv_user1.Items.Add($xMF_groups_lstv_user2.Items[$xMF_groups_lstv_user2.SelectedIndex])
-        $xMF_groups_lstv_user2.Items.Remove($xMF_groups_lstv_user2.SelectedItem)
+        if (!($xMF_groups_lstv_user2.SelectedIndex -eq "-1"))
+        {
+            if ($xMF_groups_lstv_user2.SelectedItems.Count -gt "1")
+            {
+                
+                for($i=$xMF_groups_lstv_user2.SelectedItems.Count-1;$i -ne -1;$i--)
+                {
+                    $xMF_groups_lstv_user1.Items.Add($xMF_groups_lstv_user2.SelectedItems[$i])
+                    $xMF_groups_lstv_user2.Items.Remove($xMF_groups_lstv_user2.SelectedItems[$i])
+                }
+
+            }
+            else
+            {
+                $xMF_groups_lstv_user1.Items.Add($xMF_groups_lstv_user2.Items[$xMF_groups_lstv_user1.SelectedIndex])
+                $xMF_groups_lstv_user2.Items.Remove($xMF_groups_lstv_user2.SelectedItem)
+            }
+        }
     }
 })
 
@@ -1651,8 +1732,24 @@ $xMF_group_btn_left.add_click({
     }
     else
     {
-        $xMF_groups_lstv_user1.Items.Add($xMF_groups_lstv_user2.Items[$xMF_groups_lstv_user2.SelectedIndex])
-        $xMF_groups_lstv_user2.Items.Remove($xMF_groups_lstv_user2.SelectedItem)
+        if (!($xMF_groups_lstv_user2.SelectedIndex -eq "-1"))
+        {
+            if ($xMF_groups_lstv_user2.SelectedItems.Count -gt "1")
+            {
+                
+                for($i=$xMF_groups_lstv_user2.SelectedItems.Count-1;$i -ne -1;$i--)
+                {
+                    $xMF_groups_lstv_user1.Items.Add($xMF_groups_lstv_user2.SelectedItems[$i])
+                    $xMF_groups_lstv_user2.Items.Remove($xMF_groups_lstv_user2.SelectedItems[$i])
+                }
+
+            }
+            else
+            {
+                $xMF_groups_lstv_user1.Items.Add($xMF_groups_lstv_user2.Items[$xMF_groups_lstv_user1.SelectedIndex])
+                $xMF_groups_lstv_user2.Items.Remove($xMF_groups_lstv_user2.SelectedItem)
+            }
+        }
     }
 
 })
