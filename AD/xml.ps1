@@ -34,6 +34,7 @@
                                 <MenuItem x:Name="lstv_Menu_status" Header="Сменить статус на ОБЩАЯ УЗ" ToolTip="Поменять статус если учетная запись должна быть общей (Ящик приемной и т.д.)"/>
                                 <MenuItem x:Name="lstv_Menu_copy2bufer" Header="Копировать в буфер" ToolTip="Скопировать данные выделенного пользователя в буфер обмена"/>
                                 <MenuItem x:Name="lstv_Menu_Clear" Header="Очистить" ToolTip="Очистить список"/>
+                                <MenuItem x:Name="lstv_Menu_createmdaemon" Header="Создать почту на adm.sakhalin.ru" ToolTip="Создать почту в домене adm.sakhalin.ru"/>
                                 <MenuItem x:Name="lstv_Menu_delete" Header="Удалить" ToolTip="Удалить выделенного пользователя из списка"/>
                             </ContextMenu>
                         </ListView.ContextMenu>

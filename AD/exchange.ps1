@@ -19,7 +19,7 @@
         <ListView x:Name="Exchange_listview_users" Margin="10,49.585,0,0" HorizontalAlignment="Left" Width="258.344" Height="380.227" VerticalAlignment="Top">
             <ListView.ContextMenu>
                 <ContextMenu>
-
+                    <MenuItem x:Name="exchange_lstv_menu_user_buferadd" Header="Добавить с буфера" ToolTip="Добавить пользователей с буфера обмена"/>
                     <MenuItem x:Name="exchange_lstv_menu_user_datexec" Header="Присвоить базу" ToolTip="Прописать базу данных пользователю"/>
                     <MenuItem x:Name="exchange_lstv_menu_user_add" Header="Создать почту" ToolTip="Создать почту пользователям"/>
                     <MenuItem x:Name="exchange_lstv_menu_user_delete" Header="Удалить" ToolTip="Удалить пользователя из списка"/>
@@ -141,6 +141,7 @@ $xMF_menuitem_exchange.add_click({
         {
             [System.Windows.Forms.MessageBox]::Show($Error[0].Exception.Message,"Ошибка","OK","Warning")
             Write-Host -BackgroundColor red -ForegroundColor white "Exchange -"$Error[0].Exception.Message
+            testconnection
         }
 })
 
@@ -183,6 +184,24 @@ $xMF3_Exchange_btn_load_users.add_click({
 
 })
 
+#
+# Добавление пользователей в список из буфера обмена
+#
+
+$xMF3_exchange_lstv_menu_user_buferadd.add_click({
+
+    [array]$bufusers = [windows.clipboard]::GetText().split("`n") -replace "\s",""
+    for ($i=0 ; $i -ne $bufusers.Count ; $i++)
+    {
+        $Spisok = [PSCustomObject]@{
+                    'samaccountname' = $bufusers[$i]
+                    'database' = ""
+                    'check' = ""
+                    }
+        $xMF3_Exchange_listview_users.Items.Add($Spisok)
+    }
+
+})
 
 #
 #Кнопка загрузки информация по базам данных
@@ -443,3 +462,5 @@ $xMF3_exchange_lstv_menu_user_add.add_click({
 
     create_mail
 })
+
+

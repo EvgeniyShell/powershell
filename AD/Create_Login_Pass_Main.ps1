@@ -557,9 +557,96 @@ $xmf_btn_clearsingle.add_click({
     textcheckad
 })
 
+#Кнопка очистки листвью
 $xMF_lstv_Menu_Clear.add_click({
     $xMF_lstv_SingleUser.Items.Clear()
 })
+
+#Кнопка создания почты у пользователя на mdaemon
+$xMF_lstv_Menu_createmdaemon.add_click({
+
+    if ($xMF_lstv_SingleUser.SelectedItems.Count -gt 0)
+    {
+        #for ($i=0 ; $i -ne $xMF_lstv_SingleUser.Items.Count ; $i++)
+        #{
+            if (!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].samaccountname -eq ""))
+            {
+                $usermdaemon = $xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].samaccountname
+                $usermailgr = Get-ADUser $usermdaemon -Properties memberof,mail | select memberof,mail
+                $complete = $false
+                $havemail = ""
+                if (($usermailgr.mail -eq $null) -or ($usermailgr.mail -like "*@adm.sakhalin.ru"))
+                {
+
+                    if ($usermailgr.memberof.count -gt 0)
+                    {
+                        for ($j=0 ; $j -le $usermailgr.memberof.count ; $j++)
+                        {
+                            if ($usermailgr.memberof[$j] -like "*mdaemon*")
+                            {
+                                $j=$usermailgr.memberof.count
+                                $havemail = "exist"
+                            }
+                        }
+
+                    }# END if ($usergroups.count -gt 0)
+
+
+                    if ($havemail -eq "")
+                    {
+                        try
+                        {
+                            if ($usermailgr.mail -like "*@adm.sakhalin.ru")
+                            {
+                                $ok = [System.Windows.Forms.MessageBox]::Show("У пользователя $usermdaemon прописан домен в mail но он не находится в группе mdaemon, добавить?","Уведомление","OKCANCEL","Information")
+                                if ($ok -eq "OK")
+                                {
+                                    Add-ADGroupMember -Identity "Mdaemon" -Members $usermdaemon
+                                    Write-Host "Пользователь $usermdaemon добавлен в группу Mdaemon"
+                                    $complete = $true
+                                }
+                                else
+                                {
+                                    $complete = $false
+                                    Write-Host -BackgroundColor Yellow -ForegroundColor Black "ОТМЕНЕН - Пользователь $usermdaemon НЕ добавлен в группу Mdaemon"
+                                }
+                            }
+                            else
+                            {
+                                Add-ADGroupMember -Identity "Mdaemon" -Members $usermdaemon
+                                Write-Host "Пользователь $usermdaemon добавлен в группу Mdaemon"
+                                $complete = $true
+                            }
+                        }
+                        catch
+                        {
+                            Write-Host -BackgroundColor Red -ForegroundColor white $Error[0].Exception.Message
+                        }                    
+                    }
+                    else
+                    {
+                        Write-Host -BackgroundColor Yellow -ForegroundColor Black "Пользователь $usermdaemon СОСТОИТ в группе Mdaemon"
+                    }
+
+
+                    if ($complete -eq $true)
+                    {
+                        $mailtemp = $usermdaemon+"@adm.sakhalin.ru"
+                        Set-ADUser $usermdaemon -EmailAddress $mailtemp
+                        Write-Host "Пользователю $usermdaemon прописано поле MAIL"
+                    }
+
+                }# END if ($usermailgr.mail -eq $null)
+                else
+                {
+                    Write-Host -BackgroundColor Yellow -ForegroundColor Black "ОТКАЗ: пользователь $usermdaemon в mdaemon не прописан, поле mail содержит данные ("$usermailgr.mail")"
+                }
+            #}
+        } # END if (!($xMF_lstv_SingleUser.Items[$xMF_lstv_SingleUser.SelectedIndex].samaccountname -eq ""))
+    }
+
+})
+
 
 $xMF_lstv_Menu_delete.add_click({
 if (!($xMF_lstv_SingleUser.SelectedIndex -eq -1)){
