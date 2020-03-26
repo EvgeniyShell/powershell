@@ -1379,12 +1379,12 @@ $message = [System.Windows.Forms.MessageBox]::Show("Пользователи с�
 
                     if (($xMF_chk_deletgroupsmove.IsChecked -eq $True) -and ($complete -eq $true))
                     {
-                        chkboxdeletegroups -user $User -exception "mdaemon"
+                        chkboxdeletegroups -user $login -exception "mdaemon"
                     }
 
                     if (($xMF_chk_deletmanagermove.IsChecked -eq $True) -and ($complete -eq $true))
                     {
-                        managers -user $User -empty $true -short $true
+                        managers -user $login -empty $true -short $true
                     }
 
                     $complete = $false
@@ -1448,12 +1448,12 @@ $xMF_lstv_menu_moveOU.add_click({
 
             if (($xMF_chk_deletgroupsmove.IsChecked -eq $True) -and ($complete -eq $true))
             {
-                chkboxdeletegroups -user $User -exception "mdaemon"
+                chkboxdeletegroups -user $login -exception "mdaemon"
             }
 
             if (($xMF_chk_deletmanagermove.IsChecked -eq $True) -and ($complete -eq $true))
             {
-                managers -user $User -empty $true -short $true
+                managers -user $login -empty $true -short $true
             }
 
             $complete = $false

@@ -392,6 +392,7 @@ function create_mail($all = $false) {
                     {
                         Enable-Mailbox $user -Database $database
                         $xMF3_Exchange_listview_users.Items[$i].check = "added"
+                        Write-Host "Почтовый ящик активирован для $user в базе данных $database"
                     }
                     catch
                     {

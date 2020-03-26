@@ -8,17 +8,17 @@ $xMF_inactive_txtbox_filter_Descr.Text = "декрет,общий"
 ###############################################################################
 # Действия по сортировке Listview
 ###############################################################################
-
-[Windows.RoutedEventHandler]$evt2 = 	{
-	$view1 = [System.Windows.Data.CollectionViewSource]::GetDefaultView($xMF_lstv_inactive.Items)
-	$sort1 = $view1.SortDescriptions[0].Direction
-	$direction1 = if($sort1 -and 'Descending' -eq $sort1){'Ascending'}else{'Descending'}
-	$view1.SortDescriptions.Clear()
-	$sortDescription1 = New-Object System.ComponentModel.SortDescription($_.OriginalSource.Column.Header, $direction1)
-	$view1.SortDescriptions.Add($sortDescription1)
-}
-
-    $xMF_lstv_inactive.AddHandler([System.Windows.Controls.GridViewColumnHeader]::ClickEvent, $evt2)
+#
+#[Windows.RoutedEventHandler]$evt2 = 	{
+#	$view1 = [System.Windows.Data.CollectionViewSource]::GetDefaultView($xMF_lstv_inactive.Items)
+#	$sort1 = $view1.SortDescriptions[0].Direction
+#	$direction1 = if($sort1 -and 'Descending' -eq $sort1){'Ascending'}else{'Descending'}
+#	$view1.SortDescriptions.Clear()
+#	$sortDescription1 = New-Object System.ComponentModel.SortDescription($_.OriginalSource.Column.Header, $direction1)
+#	$view1.SortDescriptions.Add($sortDescription1)
+#}
+#
+ #   $xMF_lstv_inactive.AddHandler([System.Windows.Controls.GridViewColumnHeader]::ClickEvent, $evt2)
 
 
 
