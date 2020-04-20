@@ -642,7 +642,7 @@ $xMF_Inactive_btn_cleardannie.add_click({
 
 
         $ok = [System.Windows.Forms.MessageBox]::Show("Данные у УЗ будут очищены:`n$TargetOU","Уведомление","OKCANCEL","information")
-        if ($ok = "OK")
+        if ($ok -eq "OK")
         {
             $spisok = Get-ADUser -SearchBase $TargetOU -Filter * -Properties title,Department,OfficePhone,Office,Company,memberof,manager,directreports
 
