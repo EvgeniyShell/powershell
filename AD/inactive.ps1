@@ -500,7 +500,7 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
                     {
                         try
                         {
-                            Set-ADUser $user -Office $null -OfficePhone $null -Department $null -Title $null -City $null -StreetAddress $null -PostalCode $null -Country $null -Company $null
+                            Set-ADUser $user -Office $null -OfficePhone $null -Department $null -Title $null -City $null -StreetAddress $null -PostalCode $null -Company $null
                             write-host "Данные у пользователя очищены:" $user
                         }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка очистки ->" $Error[0].Exception.Message}
                     }
@@ -569,7 +569,7 @@ if (!($xMF_lstv_inactive.Items.Count -eq 0))
                 {
                     try
                     {
-                        Set-ADUser $user -Office $null -OfficePhone $null -Department $null -Title $null -City $null -StreetAddress $null -PostalCode $null -Country $null -Company $null
+                        Set-ADUser $user -Office $null -OfficePhone $null -Department $null -Title $null -City $null -StreetAddress $null -PostalCode $null -Company $null
                         write-host "Данные у пользователя очищены:" $user
                     }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка очистки ->" $Error[0].Exception.Message}
                 }
@@ -648,7 +648,7 @@ $xMF_Inactive_btn_cleardannie.add_click({
 
             if ($xMF_inactive_cbox_dannie.IsChecked -eq $true)
             {
-                $spisok | ?{!($_.title -eq $null) -and !($_.title -eq "") -or !($_.company -eq $null) -and !($_.company -eq "") -or !($_.Department -eq $null) -and !($_.Department -eq "") -or !($_.OfficePhone -eq $null) -and !($_.OfficePhone -eq "") -or !($_.Office -eq $null) -and !($_.Office -eq "")} | Set-ADUser -Office $null -OfficePhone $null -Department $null -Title $null -City $null -StreetAddress $null -PostalCode $null -Country $null -Company $null
+                $spisok | ?{!($_.title -eq $null) -and !($_.title -eq "") -or !($_.company -eq $null) -and !($_.company -eq "") -or !($_.Department -eq $null) -and !($_.Department -eq "") -or !($_.OfficePhone -eq $null) -and !($_.OfficePhone -eq "") -or !($_.Office -eq $null) -and !($_.Office -eq "")} | Set-ADUser -Office $null -OfficePhone $null -Department $null -Title $null -City $null -StreetAddress $null -PostalCode $null -Company $null
             }
 
             if ($xMF_inactive_cbox_delman.IsChecked -eq $true)
@@ -689,7 +689,7 @@ if (($xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].Enabled -eq $Fal
                 {
                     try
                     {
-                        Set-ADUser $user -Office $null -OfficePhone $null -Department $null -Title $null -City $null -StreetAddress $null -PostalCode $null -Country $null -Company $null
+                        Set-ADUser $user -Office $null -OfficePhone $null -Department $null -Title $null -City $null -StreetAddress $null -PostalCode $null -Company $null
                         write-host "Данные у пользователя очищены:" $user
                     }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка очистки ->" $Error[0].Exception.Message}
                 }
