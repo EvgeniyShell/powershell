@@ -675,61 +675,90 @@ $xMF_Inactive_btn_cleardannie.add_click({
 # Кнопка переноса пользователя в Inactive через МЕНЮ в LISTVIEW INACTIVE
 #
 $xMF_lstv_inactive_move.add_click({
-        
-if (($xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].Enabled -eq $False) -and !($xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].status -eq "Moved"))
+#Проверка  выделена ли вообще хотя бы 1 строка
+if (!($xMF_lstv_inactive.selecteditems.count -eq 0))
 {
-    $ok = [System.Windows.Forms.MessageBox]::Show("Обработать (Перенос) пользователя?","Уведомление","OKCANCEL","information")
-        if ($ok -eq "OK")
+    $ok = ""
+    #$xMF_prBar.Value = 0
+    #$xMF_prBar.Maximum = $xMF_lstv_inactive.selecteditems.count - 1
+
+#Проверка на количество выделеных строк
+for ($i=0 ;$i -ne $xMF_lstv_inactive.selecteditems.count;  $i++)
+{
+    #проверка на заполненость определенных ячеек
+    if (($xMF_lstv_inactive.selecteditems[$i].Enabled -eq $False) -and !($xMF_lstv_inactive.selecteditems[$i].status -eq "Moved"))
+    {
+        #Если соглашаемся с переносом
+        if (!($ok -eq "OK"))
         {
+        $ok = [System.Windows.Forms.MessageBox]::Show("Обработать (Перенос) пользователя?","Уведомление","OKCANCEL","information")
+        }
+            if ($ok -eq "OK")
+            {
+    
+                    $user = $xMF_lstv_inactive.selecteditems[$i].SamAccountname
+                    Write-Host "----------------------" $xMF_lstv_inactive.selecteditems[$i].SamAccountname "--------------------------------"
 
-                $user = $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].SamAccountname
-                Write-Host "----------------------" $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].SamAccountname "--------------------------------"
+                    #Выполняем очистку данных у пользователей если установлен флажок на очистку данных
+                    if ($xMF_inactive_cbox_dannie.IsChecked -eq $true)
+                    {
+                        try
+                        {
+                            Set-ADUser $user -Office $null -OfficePhone $null -Department $null -Title $null -City $null -StreetAddress $null -PostalCode $null -Company $null
+                            write-host "Данные у пользователя очищены:" $user
+                        }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка очистки ->" $Error[0].Exception.Message}
+                    }
 
-                if ($xMF_inactive_cbox_dannie.IsChecked -eq $true)
-                {
+                    #Выполняем очистку менеджеров у пользователей если установлен флажок на очистку менеджеров
+                    if ($xMF_inactive_cbox_delman.IsChecked -eq $true)
+                    {
+                        managers -user $user -empty $true -short $true
+                    }
+                    
+                    #Выполняем очистку групп у пользователей если установлен флажок на очистку групп
+                    if ($xMF_inactive_cbox_delgr.IsChecked -eq $true)
+                    {
+                        chkboxdeletegroups -user $user -exception "mdaemon"
+                    }
+                    
+                    #Пробуем перенести учетки
                     try
                     {
-                        Set-ADUser $user -Office $null -OfficePhone $null -Department $null -Title $null -City $null -StreetAddress $null -PostalCode $null -Company $null
-                        write-host "Данные у пользователя очищены:" $user
-                    }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка очистки ->" $Error[0].Exception.Message}
-                }
-
-                if ($xMF_inactive_cbox_delman.IsChecked -eq $true)
-                {
-                    managers -user $user -empty $true -short $true
-                }
-
-                if ($xMF_inactive_cbox_delgr.IsChecked -eq $true)
-                {
-                    chkboxdeletegroups -user $user -exception "mdaemon"
-                }
-
-                try
-                {
-                    $TargetOU = "OU=Users,OU=Inactive,DC=ASO,DC=RT,DC=LOCAL"
-                    switch ($xMF_inactive_cmbx_move.items[$xMF_inactive_cmbx_move.SelectedIndex].Content)
+                        $TargetOU = "OU=Users,OU=Inactive,DC=ASO,DC=RT,DC=LOCAL"
+                        switch ($xMF_inactive_cmbx_move.items[$xMF_inactive_cmbx_move.SelectedIndex].Content)
+                        {
+                            'OU_RT' {$TargetOU = "OU=OU_RT,OU=Users,OU=Inactive,DC=ASO,DC=RT,DC=LOCAL"}
+                            'GBU' {$TargetOU = "OU=GBU,OU=Users,OU=Inactive,DC=ASO,DC=RT,DC=LOCAL"}
+                            'MO' {$TargetOU = "OU=MO,OU=Users,OU=Inactive,DC=ASO,DC=RT,DC=LOCAL"}
+                            'ALL' {$TargetOU = "OU=Users,OU=Inactive,DC=ASO,DC=RT,DC=LOCAL"}
+                        }
+                                            
+                        $userdn = $xMF_lstv_inactive.selecteditems[$i].distinguishedName
+                        Move-ADObject -Identity $userdn -TargetPath $TargetOU
+                        Write-Host "Пользователь перенесен: $user - " $xMF_inactive_cmbx_move.items[$xMF_inactive_cmbx_move.SelectedIndex].Content
+                        $xMF_lstv_inactive.selecteditems[$i].status = "Moved"
+                    }catch
                     {
-                        'OU_RT' {$TargetOU = "OU=OU_RT,OU=Users,OU=Inactive,DC=ASO,DC=RT,DC=LOCAL"}
-                        'GBU' {$TargetOU = "OU=GBU,OU=Users,OU=Inactive,DC=ASO,DC=RT,DC=LOCAL"}
-                        'MO' {$TargetOU = "OU=MO,OU=Users,OU=Inactive,DC=ASO,DC=RT,DC=LOCAL"}
-                        'ALL' {$TargetOU = "OU=Users,OU=Inactive,DC=ASO,DC=RT,DC=LOCAL"}
+                        write-host "Перенос - " $Error[0].Exception
+                        $counterr++
                     }
-                                        
-                    $userdn = $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].distinguishedName
-                    Move-ADObject -Identity $userdn -TargetPath $TargetOU
-                    Write-Host "Пользователь перенесен: $user"
-                    $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].status = "Moved"
-                }catch
-                {
-                    write-host "Перенос - " $Error[0].Exception
-                    $counterr++
-                }
-
-                $xMF_label_prBar.Content = "Пользователь перенесен: $user"
-                $xMF_lstv_inactive.Items.Refresh()
-
-    } # $ok
-} # if ($xMF_lstv_inactive.Items[$xMF_inactive_cmbx_move.SelectedIndex].Enabled -eq "False")
+                    #$xMF_prBar.Value += 1
+                    $xMF_label_prBar.Content = "Пользователей перенесено - " + $xMF_lstv_inactive.selecteditems.count
+                    $xMF_lstv_inactive.Items.Refresh()
+                    #$Form_Main.Dispatcher.Invoke([action]{},"Render")
+    
+        } # $ok
+        else {
+            $i = $xMF_lstv_inactive.selecteditems.count-1
+        }
+    } # if ($xMF_lstv_inactive.Items[$xMF_inactive_cmbx_move.SelectedIndex].Enabled -eq "False")
+    
+} # for ($i=0 ;$i -ne $xMF_lstv_inactive.selecteditems.count-1;  $i++)
+} # if (!($xMF_lstv_inactive.selecteditems.count -eq 0))
+else
+{
+    [System.Windows.Forms.MessageBox]::Show("Список пустой","Уведомление","OK","Warning")
+}
 
 })
 
@@ -739,71 +768,68 @@ if (($xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].Enabled -eq $Fal
 #
 $xMF_lstv_inactive_disable.add_click({
 
-
-if (!($xMF_lstv_inactive.Items.Count -eq 0))
+#Проверка  выделена ли вообще хотя бы 1 строка
+if (!($xMF_lstv_inactive.selecteditems.count -eq 0))
 {
-    if ($xMF_inactive_radio_disable.IsChecked -eq $true)
+    #$xMF_prBar.Value = 0
+    #$xMF_prBar.Maximum = $xMF_lstv_inactive.selecteditems.count - 1
+
+#Проверка на количество выделеных строк
+for ($i=0 ;$i -ne $xMF_lstv_inactive.selecteditems.count;  $i++)
+{
+
+    $complete = $False
+    if (($xMF_lstv_inactive.selecteditems[$i].Enabled -eq "True") -and !($xMF_lstv_inactive.selecteditems[$i].status -eq "disabled"))
     {
+        Write-Host "----------------------" $xMF_lstv_inactive.selecteditems[$i].SamAccountname "--------------------------------"
+        $user = $xMF_lstv_inactive.selecteditems[$i].SamAccountname
+        try
+        {
+            Disable-ADAccount -Identity $user
+            write-host "Пользователь отключен:" $user
+            $complete = $True
+        }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка отключения ->" $Error[0].Exception.Message
+        [System.Windows.Forms.MessageBox]::Show("Ошибка отключения УЗ - "+$user,"Уведомление","OK","information")
+        }
 
-            $complete = $False
-            
-            if (($xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].Enabled -eq "True") -and !($xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].status -eq "disabled"))
+        if ($complete -eq $True)
+        {
+            try
             {
-                Write-Host "----------------------" $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].SamAccountname "--------------------------------"
-                $user = $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].SamAccountname
-                try
-                {
-                    Disable-ADAccount -Identity $user
-                    write-host "Пользователь отключен:" $user
-                    $complete = $True
-                }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка отключения ->" $Error[0].Exception.Message
-                [System.Windows.Forms.MessageBox]::Show("Ошибка отключения УЗ - "+$user,"Уведомление","OK","information")}
-
-                if ($complete -eq $True)
-                {
-                    try
-                    {
-                        $lastlogon = $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].LastLogonAd
-                        $lastlogonEX = $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].LastLogonEX
-                        $Created = $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].Whencreated
-                        if (!($lastlogon -eq "") -and !($lastlogon -eq $null)){
-                        Set-ADUser $user -Description "Посл. вход в УЗ: $lastlogon, УЗ создана: $Created, Почта: $lastlogonEX"
-                        write-host "Description: Посл. вход в УЗ: $lastlogon, УЗ создана: $Created, Почта: $lastlogonEX"
-                        }else{Set-ADUser $user -Description "Посл. вход в УЗ: Никогда, УЗ создана: $Created, Почта: $lastlogonEX"
-                        write-host "Description: Посл. вход в УЗ: Никогда, УЗ создана: $Created, Почта: $lastlogonEX" }
-                        $xMF_lstv_inactive.Items[$xMF_lstv_inactive.SelectedIndex].status = "disabled"
-                        $xMF_lstv_inactive.Items.Refresh()
-                        $xMF_label_prBar.Content = "Обработано: $user"      
-                               
-                    }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка Description ->" $Error[0].Exception.Message
-                    $xMF_label_prBar.Content = "НЕ обработано: $user"
-                    [System.Windows.Forms.MessageBox]::Show("Ошибка в прописывании Description у "+$user,"Уведомление","OK","information")}
-
-                    if ((($xMF_inactive_cbox_delman.IsChecked -eq $true) -and ($complete -eq $True)) -or (($xMF_inactive_cbox_delgr.IsChecked -eq $true) -and ($complete -eq $True)))
-                    {
-                        $ok = [System.Windows.Forms.MessageBox]::Show("Одно из свойств выбрано`nМенеджеры - "+$xMF_inactive_cbox_delman.IsChecked+"`nГруппы - "+$xMF_inactive_cbox_delgr.IsChecked+"`nПродолжить?","Уведомление","OKCANCEL","information")
-
-                        if ($ok -eq "OK")
-                        {
-                            if (($xMF_inactive_cbox_delman.IsChecked -eq $true) -and ($complete -eq $True))
-                            {
-                                managers -user $user -empty $true -short $true
-                            }
-
-                            if (($xMF_inactive_cbox_delgr.IsChecked -eq $true) -and ($complete -eq $True))
-                            {
-                                chkboxdeletegroups -user $user -exception "mdaemon"
-                            }
-
-                        }#($ok -eq "OK")
-                    }#if ((($xMF_inactive_cbox_delman.IsChecked -eq $true) -and ($complete -eq $True)) -or (($xMF_inactive_cbox_delgr.IsChecked -eq $true) -and ($complete -eq $True)))
-
-                    
-                }
+                $lastlogon = $xMF_lstv_inactive.selecteditems[$i].LastLogonAd
+                $lastlogonEX = $xMF_lstv_inactive.selecteditems[$i].LastLogonEX
+                $Created = $xMF_lstv_inactive.selecteditems[$i].Whencreated
+                if (!($lastlogon -eq "") -and !($lastlogon -eq $null)){
+                Set-ADUser $user -Description "Посл. вход в УЗ: $lastlogon, УЗ создана: $Created, Почта: $lastlogonEX"
+                write-host "Description: Посл. вход в УЗ: $lastlogon, УЗ создана: $Created, Почта: $lastlogonEX"
+                }else{Set-ADUser $user -Description "Посл. вход в УЗ: Никогда, УЗ создана: $Created, Почта: $lastlogonEX"
+                write-host "Description: Посл. вход в УЗ: Никогда, УЗ создана: $Created, Почта: $lastlogonEX" }
+                $xMF_lstv_inactive.selecteditems[$i].status = "disabled"
+                #$xMF_lstv_inactive.Items.Refresh()
+                #$xMF_label_prBar.Content = "Обработано: $user"      
+                        
+            }catch{write-host -BackgroundColor red -ForegroundColor Yellow "Ошибка Description ->" $Error[0].Exception.Message
+            $xMF_label_prBar.Content = "НЕ обработано: $user"
+            #[System.Windows.Forms.MessageBox]::Show("Ошибка в прописывании Description у "+$user,"Уведомление","OK","information")
             }
 
-       
-    }#if ($xMF_inactive_radio_disable.IsChecked -eq $true)
+            if (($xMF_inactive_cbox_delman.IsChecked -eq $true) -and ($complete -eq $True))
+            {
+                managers -user $user -empty $true -short $true
+            }
+
+            if (($xMF_inactive_cbox_delgr.IsChecked -eq $true) -and ($complete -eq $True))
+            {
+                chkboxdeletegroups -user $user -exception "mdaemon"
+            }
+
+
+            
+        }
+    }
+    
+}
+$xMF_lstv_inactive.Items.Refresh()
 }
 
 })

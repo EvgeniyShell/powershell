@@ -402,6 +402,7 @@ function create_mail($all = $false) {
                 else
                 {
                     $xMF3_Exchange_listview_users.Items[$i].check = "exist"
+                    Write-Host "Почтовый у пользователя $user существует"
                 }
             }# END if ((!($xMF3_Exchange_listview_users.Items[$i].check -eq "added") -and !($xMF3_Exchange_listview_users.Items[$i].check -eq "exist")))
             }# END if ((!($xMF3_Exchange_listview_users.Items[$i].database -eq "") -and (!$xMF3_Exchange_listview_users.Items[$i].database -eq $null)))
