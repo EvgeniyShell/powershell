@@ -2064,7 +2064,7 @@ $xMF_Btn_Exit.add_click({
 })
 
 
-$Form_Main.ShowDialog() | out-null
+$Form_Main.ShowDialog() > $null
 
 #Select-Xml $xaml -xpath "//*[@*[contains(translate(name(.),'n','N'),'Name')]]" | Foreach {$_.Node} | Foreach {Remove-Variable -Name "xMF_$($_.Name)"}
 #Select-Xml $xaml2 -xpath "//*[@*[contains(translate(name(.),'n','N'),'Name')]]" | Foreach {$_.Node} | Foreach {Remove-Variable -Name "xMF2_$($_.Name)"}
